@@ -2,3 +2,23 @@ TARDIS
 ======
 
 A program for time tracking.
+
+
+Overview
+--------
+
+Records the current time and project string entered by appending it to a plain
+text file.
+
+
+TODO
+----
+
+* Sqlite integration
+* Communication with Harvest (harvestapp.com)
+
+
+Dependencies
+------------
+
+Tested with clang (http://clang.llvm.org/), but should work with any c compiler.
