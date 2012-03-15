@@ -1,10 +1,9 @@
-COMPILER=clang
 OPTIONS=-Wall
 
 all: clean build
 
 build:
-	$(COMPILER) $(OPTIONS) tardis.c -o tardis
+	clang $(OPTIONS) tardis.c -o tardis
 
 clean:
-	rm -f *.o tardis
+	rm -f tardis
