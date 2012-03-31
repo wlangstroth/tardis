@@ -1,4 +1,4 @@
-OPTIONS=-Wall
+OPTIONS=-Wall -lsqlite3
 
 all: clean build
 
