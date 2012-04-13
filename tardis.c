@@ -45,12 +45,6 @@ main(int argc, char **argv)
 // Callback required by sqlite3_exec()
 static int
 callback(void *NotUsed, int argc, char **argv, char **az_col_name) {
-  int i;
-
-  for (i = 0; i < argc; i++) {
-    printf("%s = %s\n", az_col_name[i], argv[i] ? argv[i] : "NULL");
-  }
   printf("\n");
-
   return 0;
 }
