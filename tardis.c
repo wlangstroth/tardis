@@ -49,19 +49,19 @@ main(int argc, char *argv[])
   }
 
   result_code = sqlite3_exec(db, update_sql, post_update, 0, &error_message);
-  if (result_code != SQLITE_OK) {
+  if (result_code) {
     fprintf(stderr, "SQL error: %s\n", error_message);
     sqlite3_free(error_message);
   }
 
   result_code = sqlite3_exec(db, insert_sql, post_insert, 0, &error_message);
-  if (result_code != SQLITE_OK) {
+  if (result_code) {
     fprintf(stderr, "SQL error: %s\n", error_message);
     sqlite3_free(error_message);
   }
 
   result_code = sqlite3_exec(db, select_sql, post_select, 0, &error_message);
-  if (result_code != SQLITE_OK) {
+  if (result_code) {
     fprintf(stderr, "SQL error: %s\n", error_message);
     sqlite3_free(error_message);
   }
