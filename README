@@ -28,7 +28,11 @@ That's it!
 Scripts
 -------
 
-There are some convenience scripts. You may find them in the script directory.
+There are some convenience scripts in the script/ directory.
+
+report: how many seconds you have devoted to a project
+all: all entries
+clear: delete all entries
 
 
 TODO
@@ -36,6 +40,7 @@ TODO
 
 * Batch export to Harvest (harvestapp.com)
 * Table as export log (with a last exported timestamp)
+* make install
 
 
 Dependencies
