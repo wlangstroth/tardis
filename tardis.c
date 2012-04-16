@@ -12,11 +12,11 @@ static int post_insert(void *, int, char **, char **);
 int
 main(int argc, char **argv)
 {
-  sqlite3 *db;
-  char *error_message = 0;
-  int result_code;
-  char update_sql[BUFFER_LENGTH];
-  char insert_sql[BUFFER_LENGTH];
+  sqlite3    *db;
+  char       *error_message = 0;
+  int         result_code;
+  char        update_sql[BUFFER_LENGTH];
+  char        insert_sql[BUFFER_LENGTH];
 
   if (argc < 2) {
     fprintf(stderr, "Usage: %s project_name [description]\n", argv[0]);
