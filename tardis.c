@@ -5,7 +5,7 @@
 
 #define BUFFER_LENGTH 4096
 
-static int callback(void *NotUsed, int argc, char **argv, char **az_col_name);
+static int callback(void *not_used, int argc, char *argv[], char *az_col_name[]);
 static int post_update(void *not_used, int argc, char *argv[], char *az_col_name[]);
 static int post_insert(void *not_used, int argc, char *argv[], char *az_col_name[]);
 
