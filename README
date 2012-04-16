@@ -1,35 +1,41 @@
 TARDIS
 ======
 
-A program for time tracking.
+A dirt simple program for time tracking.
 
 
 Overview
 --------
 
 Records the current time and project string entered by inserting into an entry
-table in Sqlite3.
+table.
 
 
-Schema
-------
+Usage
+-----
 
-The schema is a couple of tables. The important one is:
+To create a new entry,
 
-CREATE TABLE entries(
-  id integer primary key autoincrement,
-  start datetime default current_timestamp,
-  project text,
-  description text,
-  end datetime
-);
+    $ t project "a description of the project"
+
+To stop for the day,
+
+    $ t stop
+
+That's it!
+
+
+Scripts
+-------
+
+There are some convenience scripts. You may find them in the script directory.
 
 
 TODO
 ----
 
 * Batch export to Harvest (harvestapp.com)
-* Table for exports with a last exported timestamp
+* Table as export log (with a last exported timestamp)
 
 
 Dependencies
