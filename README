@@ -7,30 +7,24 @@ A program for time tracking.
 Overview
 --------
 
-Records the current time and project string entered by inserting into an event
+Records the current time and project string entered by inserting into an entry
 table in Sqlite3.
-
-
-Event Types
------------
-
-The events recorded should be:
-
-* start (... work on a project)
-* stop
-* export
-
-The 'export' event demarcates the last export, so that when exporting to an
-external program, only the relevant information is sent.
 
 
 TODO
 ----
 
 * Batch export to Harvest (harvestapp.com)
+* Table for exports with a last exported timestamp
 
 
 Dependencies
 ------------
 
-Tested with clang (http://clang.llvm.org/), but should work with any c compiler.
+Tested with clang (http://clang.llvm.org/), but should work with any C compiler.
+
+
+Licence
+-------
+
+MIT

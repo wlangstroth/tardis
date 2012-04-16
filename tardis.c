@@ -15,15 +15,15 @@ main(int argc, char **argv)
   int result_code;
   char sql[BUFFER_LENGTH];
 
-  if (argc != 2) {
-    fprintf(stderr, "Usage: %s project_name\n", argv[0]);
+  if (argc < 2) {
+    fprintf(stderr, "Usage: %s project_name [description]\n", argv[0]);
     exit(EXIT_FAILURE);
   }
 
   char *project = argv[1];
   char *action = "START";
 
-  sprintf(sql, "insert into events(project, action) values('%s','%s');", project, action);
+  sprintf(sql, "insert into entries(project, description) values('%s','%s');", project, action);
 
   result_code = sqlite3_open("log.db", &db);
   if (result_code) {
@@ -42,7 +42,7 @@ main(int argc, char **argv)
   return EXIT_SUCCESS;
 }
 
-// Callback required by sqlite3_exec()
+
 static int
 callback(void *NotUsed, int argc, char **argv, char **az_col_name) {
   printf("\n");
