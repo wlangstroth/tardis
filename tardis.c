@@ -4,7 +4,7 @@
 #include <sqlite3.h>
 
 #define BUFFER_LENGTH 4096
-#define DATE_LENGTH    128
+#define DATE_LENGTH     20
 
 // Forward declarations for sqlite3_exec() callbacks
 static int post_create(void *, int, char **, char **);
