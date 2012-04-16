@@ -5,9 +5,9 @@
 
 #define BUFFER_LENGTH 4096
 
-static int callback(void *not_used, int argc, char *argv[], char *az_col_name[]);
-static int post_update(void *not_used, int argc, char *argv[], char *az_col_name[]);
-static int post_insert(void *not_used, int argc, char *argv[], char *az_col_name[]);
+static int callback(void *, int, char **, char **);
+static int post_update(void *, int, char **, char **);
+static int post_insert(void *, int, char **, char **);
 
 int
 main(int argc, char **argv)
@@ -35,7 +35,7 @@ main(int argc, char **argv)
     exit(EXIT_FAILURE);
   }
 
-  result_code = sqlite3_exec(db, sql, callback, 0, &z_err_msg);
+  result_code = sqlite3_exec(db, insert_sql, callback, 0, &z_err_msg);
   if (result_code != SQLITE_OK) {
     fprintf(stderr, "SQL error: %s\n", z_err_msg);
     sqlite3_free(z_err_msg);
