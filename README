@@ -11,6 +11,20 @@ Records the current time and project string entered by inserting into an entry
 table in Sqlite3.
 
 
+Schema
+------
+
+The schema is a couple of tables. The important one is:
+
+CREATE TABLE entries(
+  id integer primary key autoincrement,
+  start datetime default current_timestamp,
+  project text,
+  description text,
+  end datetime
+);
+
+
 TODO
 ----
 
