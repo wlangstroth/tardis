@@ -53,6 +53,12 @@ callback(void *not_used, int argc, char *argv[], char *az_col_name[]) {
 }
 
 static int
+select_display(void *not_used, int argc, char *argv[], char *az_col_name[]) {
+  printf("select statement\n");
+  return 0;
+}
+
+static int
 post_update(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   return 0;
 }
