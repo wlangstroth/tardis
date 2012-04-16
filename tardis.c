@@ -6,6 +6,8 @@
 #define BUFFER_LENGTH 4096
 
 static int callback(void *NotUsed, int argc, char **argv, char **az_col_name);
+static int post_update(void *not_used, int argc, char *argv[], char *az_col_name[]);
+static int post_insert(void *not_used, int argc, char *argv[], char *az_col_name[]);
 
 int
 main(int argc, char **argv)
@@ -13,7 +15,8 @@ main(int argc, char **argv)
   sqlite3 *db;
   char *z_err_msg = 0;
   int result_code;
-  char sql[BUFFER_LENGTH];
+  char update_sql[BUFFER_LENGTH];
+  char insert_sql[BUFFER_LENGTH];
 
   if (argc < 2) {
     fprintf(stderr, "Usage: %s project_name [description]\n", argv[0]);
@@ -23,7 +26,7 @@ main(int argc, char **argv)
   char *project = argv[1];
   char *action = "START";
 
-  sprintf(sql, "insert into entries(project, description) values('%s','%s');", project, action);
+  sprintf(insert_sql, "insert into entries(start, project, description) values('%s','%s');", project, action);
 
   result_code = sqlite3_open("log.db", &db);
   if (result_code) {
@@ -44,7 +47,17 @@ main(int argc, char **argv)
 
 
 static int
-callback(void *NotUsed, int argc, char **argv, char **az_col_name) {
+callback(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   printf("\n");
+  return 0;
+}
+
+static int
+post_update(void *not_used, int argc, char *argv[], char *az_col_name[]) {
+  return 0;
+}
+
+static int
+post_insert(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   return 0;
 }

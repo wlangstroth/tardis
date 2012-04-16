@@ -1,9 +1,9 @@
 OPTIONS=-Wall -lsqlite3
 
-all: clean build
+all: clean t
 
-build:
-	clang $(OPTIONS) tardis.c -o t
+t:
+	clang $(OPTIONS) tardis.c -o $@
 
 clean:
 	rm -f t
