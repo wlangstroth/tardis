@@ -51,7 +51,7 @@ main(int argc, char *argv[])
   static char  *update_template = "update entries set end='%s' where id = (select max(id) from entries);";
   static char  *time_format = "%Y-%m-%d %H:%M:%S";
   time(&rawtime);
-  timeinfo = localtime(&rawtime);
+  timeinfo = gmtime(&rawtime);
   strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
 
   sprintf(update_sql, update_template, date_buffer);
