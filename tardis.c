@@ -13,7 +13,7 @@ int
 main(int argc, char **argv)
 {
   sqlite3 *db;
-  char *z_err_msg = 0;
+  char *error_message = 0;
   int result_code;
   char update_sql[BUFFER_LENGTH];
   char insert_sql[BUFFER_LENGTH];
@@ -35,10 +35,10 @@ main(int argc, char **argv)
     exit(EXIT_FAILURE);
   }
 
-  result_code = sqlite3_exec(db, insert_sql, callback, 0, &z_err_msg);
+  result_code = sqlite3_exec(db, insert_sql, callback, 0, &error_message);
   if (result_code != SQLITE_OK) {
-    fprintf(stderr, "SQL error: %s\n", z_err_msg);
-    sqlite3_free(z_err_msg);
+    fprintf(stderr, "SQL error: %s\n", error_message);
+    sqlite3_free(error_message);
   }
 
   sqlite3_close(db);
