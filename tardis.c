@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <strings.h>
 #include <time.h>
 #include <sqlite3.h>
 
@@ -22,6 +23,7 @@ main(int argc, char *argv[])
   char          date_buffer[DATE_LENGTH];
   time_t        rawtime;
   struct tm    *timeinfo;
+  static char  *time_format = "%Y-%m-%d %H:%M:%S";
 
   if (argc < 2 || argc > 3) {
     fprintf(stderr, "Usage: %s project_name [description]\n", argv[0]);
@@ -49,9 +51,8 @@ main(int argc, char *argv[])
   }
 
   static char  *update_template = "update entries set end='%s' where id = (select max(id) from entries);";
-  static char  *time_format = "%Y-%m-%d %H:%M:%S";
   time(&rawtime);
-  timeinfo = gmtime(&rawtime);
+  timeinfo = localtime(&rawtime);
   strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
 
   sprintf(update_sql, update_template, date_buffer);
@@ -61,12 +62,14 @@ main(int argc, char *argv[])
     sqlite3_free(error_message);
   }
 
-  static char  *insert_template = "insert into entries(project, description) values('%s','%s');";
-  sprintf(insert_sql, insert_template, project, description);
-  result_code = sqlite3_exec(db, insert_sql, post_insert, 0, &error_message);
-  if (result_code) {
-    fprintf(stderr, "SQL error: %s\n", error_message);
-    sqlite3_free(error_message);
+  if (strcmp(project, "stop")) {
+    static char  *insert_template = "insert into entries(project, description) values('%s','%s');";
+    sprintf(insert_sql, insert_template, project, description);
+    result_code = sqlite3_exec(db, insert_sql, post_insert, 0, &error_message);
+    if (result_code) {
+      fprintf(stderr, "SQL error: %s\n", error_message);
+      sqlite3_free(error_message);
+    }
   }
 
   sqlite3_close(db);
