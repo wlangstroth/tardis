@@ -7,10 +7,7 @@
 #define BUFFER_LENGTH 4096
 #define DATE_LENGTH     20
 
-// Forward declarations for sqlite3_exec() callbacks
-static int post_create(void *, int, char **, char **);
-static int post_update(void *, int, char **, char **);
-static int post_insert(void *, int, char **, char **);
+static int sink(void *, int, char **, char **);
 
 int
 main(int argc, char *argv[])
@@ -44,7 +41,7 @@ main(int argc, char *argv[])
   }
 
   static char  *create_sql = "create table if not exists entries(id integer primary key autoincrement, start datetime default current_timestamp, project text, description text, end datetime)";
-  result_code = sqlite3_exec(db, create_sql, post_create, 0, &error_message);
+  result_code = sqlite3_exec(db, create_sql, sink, 0, &error_message);
   if (result_code) {
     fprintf(stderr, "SQL error: %s\n", error_message);
     sqlite3_free(error_message);
@@ -56,7 +53,7 @@ main(int argc, char *argv[])
   strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
 
   sprintf(update_sql, update_template, date_buffer);
-  result_code = sqlite3_exec(db, update_sql, post_update, 0, &error_message);
+  result_code = sqlite3_exec(db, update_sql, sink, 0, &error_message);
   if (result_code) {
     fprintf(stderr, "SQL error: %s\n", error_message);
     sqlite3_free(error_message);
@@ -65,7 +62,7 @@ main(int argc, char *argv[])
   if (strcmp(project, "stop")) {
     static char  *insert_template = "insert into entries(project, description) values('%s','%s');";
     sprintf(insert_sql, insert_template, project, description);
-    result_code = sqlite3_exec(db, insert_sql, post_insert, 0, &error_message);
+    result_code = sqlite3_exec(db, insert_sql, sink, 0, &error_message);
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
       sqlite3_free(error_message);
@@ -77,19 +74,6 @@ main(int argc, char *argv[])
 }
 
 static int
-post_create(void *not_used, int argc, char *argv[], char *az_col_name[]) {
-  printf("table created\n");
-  return 0;
-}
-
-static int
-post_update(void *not_used, int argc, char *argv[], char *az_col_name[]) {
-  printf("update last entry\n");
-  return 0;
-}
-
-static int
-post_insert(void *not_used, int argc, char *argv[], char *az_col_name[]) {
-  printf("insert entry\n");
+sink(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   return 0;
 }
