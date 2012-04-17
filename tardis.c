@@ -33,9 +33,10 @@ main(int argc, char *argv[])
 
   // This will create a new ~/.tardis.db file if one does not exist, but will not
   // populate it with an entries table, so we have to do that.
-  result_code = sqlite3_open("~/.tardis.db", &db);
+  // TODO: fix this hardcoded value
+  result_code = sqlite3_open("/Users/will/.tardis.db", &db);
   if (result_code == SQLITE_CANTOPEN) {
-    fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+    fprintf(stderr, "%s\n", sqlite3_errmsg(db));
     sqlite3_close(db);
     exit(EXIT_FAILURE);
   }
