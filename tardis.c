@@ -31,9 +31,9 @@ main(int argc, char *argv[])
   char *description = argv[2];
 
 
-  // This will create a new log.db file if one does not exist, but will not
+  // This will create a new ~/.tardis.db file if one does not exist, but will not
   // populate it with an entries table, so we have to do that.
-  result_code = sqlite3_open("log.db", &db);
+  result_code = sqlite3_open("~/.tardis.db", &db);
   if (result_code == SQLITE_CANTOPEN) {
     fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
     sqlite3_close(db);
