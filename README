@@ -41,6 +41,7 @@ TODO
 * Batch export to Harvest (harvestapp.com)
 * Table as export log (with a last exported timestamp)
 * make install
+* man page
 
 
 Dependencies
