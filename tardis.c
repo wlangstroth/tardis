@@ -35,7 +35,7 @@ main(int argc, char *argv[])
   // populate it with an entries table, so we have to do that.
   // TODO: fix this hardcoded value
   result_code = sqlite3_open("/Users/will/.tardis.db", &db);
-  if (result_code == SQLITE_CANTOPEN) {
+  if (result_code) {
     fprintf(stderr, "%s\n", sqlite3_errmsg(db));
     sqlite3_close(db);
     exit(EXIT_FAILURE);
