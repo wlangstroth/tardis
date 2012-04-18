@@ -36,6 +36,7 @@ main(int argc, char *argv[])
   int           result_code;
   char          update_sql[BUFFER_LENGTH];
   char          insert_sql[BUFFER_LENGTH];
+  char          add_sql[BUFFER_LENGTH];
   char          date_buffer[DATE_LENGTH];
   char          home_db[BUFFER_LENGTH];
   time_t        rawtime;
@@ -43,6 +44,15 @@ main(int argc, char *argv[])
   static char  *time_format = "%Y-%m-%d %H:%M:%S";
   char *project;
   char *description;
+
+  static char *insert_template =
+    "insert into entries(project, description) values('%s','%s')";
+  static char *add_template =
+    "insert into entries(project, start, end, description) values('%s','%s','%s','%s')";
+  static char *update_template =
+    "update entries \
+      set end='%s'  \
+      where start = (select max(start) from entries)";
 
   if (argc < 2) {
     fprintf(stderr, "Usage: %s mode [options]\n", argv[0]);
@@ -89,10 +99,6 @@ main(int argc, char *argv[])
     project = argv[2];
     description = argv[3];
 
-    static char *update_template =
-      "update entries \
-        set end='%s'  \
-        where start = (select max(start) from entries)";
     time(&rawtime);
     timeinfo = gmtime(&rawtime);
     strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
@@ -104,8 +110,6 @@ main(int argc, char *argv[])
       sqlite3_free(error_message);
     }
 
-    static char *insert_template =
-      "insert into entries(project, description) values('%s','%s')";
     sprintf(insert_sql, insert_template, project, description);
     result_code = sqlite3_exec(db, insert_sql, sink, 0, &error_message);
     if (result_code) {
@@ -145,10 +149,23 @@ main(int argc, char *argv[])
 // Add Mode
 // -----------------------------------------------------------------------------
 
+    project = argv[2];
+    char *start = argv[3];
+    char *end = argv[4];
+    description = argv[5];
+
     if (argc < 5 || argc > 6) {
       fprintf(stderr, "Usage: %s add project_name start end [description]\n", argv[0]);
       exit(EXIT_FAILURE);
     }
+
+    sprintf(add_sql, add_template, project, start, end, description);
+    result_code = sqlite3_exec(db, insert_sql, sink, 0, &error_message);
+    if (result_code) {
+      fprintf(stderr, "SQL error: %s\n", error_message);
+      sqlite3_free(error_message);
+    }
+
 
   } else if (!strcmp(mode, "stop")) {
 // -----------------------------------------------------------------------------
@@ -160,10 +177,6 @@ main(int argc, char *argv[])
       exit(EXIT_FAILURE);
     }
 
-    static char *update_template =
-      "update entries \
-        set end='%s'  \
-        where start = (select max(start) from entries)";
     time(&rawtime);
     timeinfo = gmtime(&rawtime);
     strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
