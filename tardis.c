@@ -145,11 +145,20 @@ main(int argc, char *argv[])
 // Add Mode
 // -----------------------------------------------------------------------------
 
+    if (argc < 5 || argc > 6) {
+      fprintf(stderr, "Usage: %s add project_name start end [description]\n", argv[0]);
+      exit(EXIT_FAILURE);
+    }
 
   } else if (!strcmp(mode, "stop")) {
 // -----------------------------------------------------------------------------
 // Stop Mode
 // -----------------------------------------------------------------------------
+
+    if (argc != 2) {
+      fprintf(stderr, "Usage: %s stop\n", argv[0]);
+      exit(EXIT_FAILURE);
+    }
 
     static char *update_template =
       "update entries \
@@ -168,7 +177,7 @@ main(int argc, char *argv[])
 
   } else {
     fprintf(stderr, "Unrecognized mode\n");
-    fprintf(stderr, "Available modes: s[tart], stop, report\n");
+    fprintf(stderr, "Available modes: s[tart], stop, report, add\n");
     exit(EXIT_FAILURE);
   }
 
