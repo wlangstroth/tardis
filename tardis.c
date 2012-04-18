@@ -20,7 +20,6 @@
 #define DATE_LENGTH     20
 #define TIME_LENGTH     32
 
-
 static int report(void *, int, char **, char **);
 static int sink(void *, int, char **, char **);
 char *seconds_to_time_string(int);
@@ -71,10 +70,10 @@ main(int argc, char *argv[])
     sqlite3_free(error_message);
   }
 
+  if (!strcmp(mode, "s") || !strcmp(mode, "start")) {
 // -----------------------------------------------------------------------------
 // Start Mode
 // -----------------------------------------------------------------------------
-  if (strcmp(mode, "s") == 0 || strcmp(mode, "start") == 0) {
 
     if (argc < 3) {
       fprintf(stderr, "Usage: %s s[tart] project_name [description]\n", argv[0]);
@@ -108,19 +107,16 @@ main(int argc, char *argv[])
       sqlite3_free(error_message);
     }
 
-  }
-
+  } else if (!strcmp(mode, "export")) {
 // -----------------------------------------------------------------------------
 // Export Mode
 // -----------------------------------------------------------------------------
-  if (strcmp(mode, "export") == 0) {
     printf("Export to Harvest coming soon.\n");
-  }
 
+  } else if (!strcmp(mode, "report")) {
 // -----------------------------------------------------------------------------
 // Report Mode
 // -----------------------------------------------------------------------------
-  if (strcmp(mode, "report") == 0) {
 
     printf("+-----------------------+--------------+\n");
     printf("| project               | time         |\n");
@@ -137,12 +133,17 @@ main(int argc, char *argv[])
     }
 
     printf("+-----------------------+--------------+\n");
-  }
 
+  } else if (!strcmp(mode, "add")) {
+// -----------------------------------------------------------------------------
+// Add Mode
+// -----------------------------------------------------------------------------
+
+
+  } else if (!strcmp(mode, "stop")) {
 // -----------------------------------------------------------------------------
 // Stop Mode
 // -----------------------------------------------------------------------------
-  if (strcmp(mode, "stop") == 0) {
 
     static char *update_template =
       "update entries \
@@ -159,12 +160,19 @@ main(int argc, char *argv[])
       sqlite3_free(error_message);
     }
 
+  } else {
+    fprintf(stderr, "Unrecognized mode\n");
+    fprintf(stderr, "Available modes: s[tart], report, \n", argv[0]);
+    exit(EXIT_FAILURE);
   }
 
   sqlite3_close(db);
   return EXIT_SUCCESS;
 }
 
+// -----------------------------------------------------------------------------
+// Callback Functions
+// -----------------------------------------------------------------------------
 static int
 report(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   long time_spent = argv[1] ? atoi(argv[1]) : 0;
@@ -178,6 +186,9 @@ sink(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   return 0;
 }
 
+// -----------------------------------------------------------------------------
+// Utility Functions
+// -----------------------------------------------------------------------------
 char *
 seconds_to_time_string(int seconds) {
   int h, m, s;
