@@ -47,8 +47,6 @@ main(int argc, char *argv[])
 
   static char *insert_template =
     "insert into entries(project, description) values('%s','%s')";
-  static char *add_template =
-    "insert into entries(project, start, end, description) values('%s','%s','%s','%s')";
   static char *update_template =
     "update entries \
       set end='%s'  \
@@ -149,23 +147,25 @@ main(int argc, char *argv[])
 // Add Mode
 // -----------------------------------------------------------------------------
 
-    project = argv[2];
-    char *start = argv[3];
-    char *end = argv[4];
-    description = argv[5];
-
     if (argc < 5 || argc > 6) {
       fprintf(stderr, "Usage: %s add project_name start end [description]\n", argv[0]);
       exit(EXIT_FAILURE);
     }
 
+    project = argv[2];
+    char *start = argv[3];
+    char *end = argv[4];
+    description = argv[5];
+    static char *add_template =
+      "insert into entries(project, start, end, description) values('%s','%s','%s','%s')";
+
     sprintf(add_sql, add_template, project, start, end, description);
-    result_code = sqlite3_exec(db, insert_sql, sink, 0, &error_message);
+
+    result_code = sqlite3_exec(db, add_sql, sink, 0, &error_message);
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
       sqlite3_free(error_message);
     }
-
 
   } else if (!strcmp(mode, "stop")) {
 // -----------------------------------------------------------------------------
