@@ -11,6 +11,7 @@
 
 static int report(void *, int, char **, char **);
 static int sink(void *, int, char **, char **);
+char *seconds_to_time_string(int);
 
 int
 main(int argc, char *argv[])
@@ -97,9 +98,9 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
   if (strcmp(mode, "report") == 0) {
 
-    printf("+----------------+----------------+\n");
-    printf("| project        | time           |\n");
-    printf("+----------------+----------------+\n");
+    printf("+-----------------------+--------------+\n");
+    printf("| project               | time         |\n");
+    printf("+-----------------------+--------------+\n");
 
     static char *report_sql = "select project, sum(strftime('%s',end) - strftime('%s',start)) as seconds from entries group by project";
     result_code = sqlite3_exec(db, report_sql, report, 0, &error_message);
@@ -108,7 +109,7 @@ main(int argc, char *argv[])
       sqlite3_free(error_message);
     }
 
-    printf("+----------------+----------------+\n");
+    printf("+-----------------------+--------------+\n");
   }
 
 // -----------------------------------------------------------------------------
@@ -136,9 +137,9 @@ main(int argc, char *argv[])
 
 static int
 report(void *not_used, int argc, char *argv[], char *az_col_name[]) {
-  long time_spent = argv[1];
+  long time_spent = argv[1] ? atoi(argv[1]) : 0;
 
-  printf("| %-14s | %14s |\n", argv[0], time_spent);
+  printf("| %-21s | %12s |\n", argv[0], seconds_to_time_string(time_spent));
   return 0;
 }
 
@@ -148,19 +149,20 @@ sink(void *not_used, int argc, char *argv[], char *az_col_name[]) {
 }
 
 char *
-seconds_to_time(int seconds) {
+seconds_to_time_string(int seconds) {
   int h, m, s;
   static char buff[TIME_LENGTH];
 
   if (seconds > 0) {
-    h = seconds / 3600;
     m = seconds / 60;
     s = seconds % 60;
+    h = m / 60;
+    m = m % 60;
   } else {
-    return 0;
+    return "0h  0m  0s";
   }
 
-  sprintf(buff, "%dh %dm %ds", h, m, s);
+  sprintf(buff, "%2dh %2dm %2ds", h, m, s);
 
   return buff;
 }
