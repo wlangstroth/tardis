@@ -1,3 +1,15 @@
+// -----------------------------------------------------------------------------
+//
+// tardis.c
+//
+// Time tracking for Timelords. Or people who are no good at time tracking, like
+// me.
+//
+// Author:  Will Langstroth
+// License: MIT
+//
+// -----------------------------------------------------------------------------
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
@@ -36,7 +48,7 @@ main(int argc, char *argv[])
 
   char *mode = argv[1];
 
-  // This will create a new ~/.tardis.db file if one does not exist..
+  // This will create a new ~/.tardis.db file if one does not exist.
   // TODO: fix this hardcoded value
   result_code = sqlite3_open("/Users/will/.tardis.db", &db);
   if (result_code) {
@@ -45,7 +57,14 @@ main(int argc, char *argv[])
     exit(EXIT_FAILURE);
   }
 
-  static char  *create_sql = "create table if not exists entries(id integer primary key autoincrement, start datetime default current_timestamp, project text, description text, end datetime)";
+  static char *create_sql =
+    "create table if not exists entries(        \
+      id integer primary key autoincrement,     \
+      start datetime default current_timestamp, \
+      project text,                             \
+      description text,                         \
+      end datetime)";
+
   result_code = sqlite3_exec(db, create_sql, sink, 0, &error_message);
   if (result_code) {
     fprintf(stderr, "SQL error: %s\n", error_message);
@@ -61,10 +80,14 @@ main(int argc, char *argv[])
       fprintf(stderr, "Usage: %s s[tart] project_name [description]\n", argv[0]);
       exit(EXIT_FAILURE);
     }
+
     project = argv[2];
     description = argv[3];
 
-    static char  *update_template = "update entries set end='%s' where start = (select max(start) from entries)";
+    static char *update_template =
+      "update entries \
+        set end='%s'  \
+        where start = (select max(start) from entries)";
     time(&rawtime);
     timeinfo = gmtime(&rawtime);
     strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
@@ -76,7 +99,8 @@ main(int argc, char *argv[])
       sqlite3_free(error_message);
     }
 
-    static char  *insert_template = "insert into entries(project, description) values('%s','%s')";
+    static char *insert_template =
+      "insert into entries(project, description) values('%s','%s')";
     sprintf(insert_sql, insert_template, project, description);
     result_code = sqlite3_exec(db, insert_sql, sink, 0, &error_message);
     if (result_code) {
@@ -90,7 +114,7 @@ main(int argc, char *argv[])
 // Export Mode
 // -----------------------------------------------------------------------------
   if (strcmp(mode, "export") == 0) {
-    printf("Export feature coming soon.\n");
+    printf("Export to Harvest coming soon.\n");
   }
 
 // -----------------------------------------------------------------------------
@@ -102,7 +126,10 @@ main(int argc, char *argv[])
     printf("| project               | time         |\n");
     printf("+-----------------------+--------------+\n");
 
-    static char *report_sql = "select project, sum(strftime('%s',end) - strftime('%s',start)) as seconds from entries group by project";
+    static char *report_sql =
+      "select project, \
+        sum(strftime('%s',end) - strftime('%s',start)) as seconds \
+        from entries group by project";
     result_code = sqlite3_exec(db, report_sql, report, 0, &error_message);
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
@@ -117,7 +144,10 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
   if (strcmp(mode, "stop") == 0) {
 
-    static char  *update_template = "update entries set end='%s' where start = (select max(start) from entries)";
+    static char *update_template =
+      "update entries \
+        set end='%s'  \
+        where start = (select max(start) from entries)";
     time(&rawtime);
     timeinfo = gmtime(&rawtime);
     strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
