@@ -1,14 +1,12 @@
 TARDIS
 ======
 
-A dirt simple program for time tracking.
+Time tracking for Timelords!
 
-
-Overview
---------
-
-Records the current time and project string entered by inserting into an entry
-table.
+Or people who spend most of their time on the command line, and always forget
+to open that browser window, sign in, bugger about with the mouse until
+some drop-down gives you the correct time, click on the project, find the
+activity, select the ... oh, screw it! I'm writing my own!
 
 
 Usage
@@ -16,13 +14,15 @@ Usage
 
 To create a new entry,
 
-    $ t project "a description of the project"
+    $ tardis start project "a description of the project"
 
 To stop for the day,
 
-    $ t stop
+    $ tardis stop
 
-That's it!
+You can also shorten "start" to "s", like so:
+
+    $ tardis s another-project "this is a different project"
 
 
 Scripts
@@ -30,24 +30,15 @@ Scripts
 
 There are some convenience scripts in the script/ directory.
 
-report: how many seconds you have devoted to a project
-all: all entries
+all: view all entries
 clear: delete all entries
-
-
-TODO
-----
-
-* Batch export to Harvest (harvestapp.com)
-* Table as export log (with a last exported timestamp)
-* make install
-* man page
 
 
 Dependencies
 ------------
 
-Tested with clang (http://clang.llvm.org/), but should work with any C compiler.
+* sqlite3
+* clang (but should work with any C compiler)
 
 
 Licence
