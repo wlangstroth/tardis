@@ -2,8 +2,12 @@
 //
 // tardis.c
 //
-// Time tracking for Timelords. Or people who are no good at time tracking, like
-// me.
+// Time tracking for Timelords!
+//
+// Or people who spend most of their time on the command line, and always forget
+// to open that browser window, sign in, bugger about with the mouse until
+// some drop-down gives you the correct time, click on the project, find the
+// activity, select the ... oh, screw it! I'm writing my own!
 //
 // Author:  Will Langstroth
 // License: MIT
@@ -33,6 +37,7 @@ main(int argc, char *argv[])
   char          update_sql[BUFFER_LENGTH];
   char          insert_sql[BUFFER_LENGTH];
   char          date_buffer[DATE_LENGTH];
+  char          home_db[BUFFER_LENGTH];
   time_t        rawtime;
   struct tm    *timeinfo;
   static char  *time_format = "%Y-%m-%d %H:%M:%S";
@@ -47,9 +52,10 @@ main(int argc, char *argv[])
 
   char *mode = argv[1];
 
+  sprintf(home_db, "%s/.tardis.db", getenv("HOME"));
+
   // This will create a new ~/.tardis.db file if one does not exist.
-  // TODO: fix this hardcoded value
-  result_code = sqlite3_open("/Users/will/.tardis.db", &db);
+  result_code = sqlite3_open(home_db, &db);
   if (result_code) {
     fprintf(stderr, "%s\n", sqlite3_errmsg(db));
     sqlite3_close(db);
@@ -162,7 +168,7 @@ main(int argc, char *argv[])
 
   } else {
     fprintf(stderr, "Unrecognized mode\n");
-    fprintf(stderr, "Available modes: s[tart], report, \n", argv[0]);
+    fprintf(stderr, "Available modes: s[tart], stop, report\n");
     exit(EXIT_FAILURE);
   }
 
