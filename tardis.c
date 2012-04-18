@@ -6,6 +6,8 @@
 
 #define BUFFER_LENGTH 4096
 #define DATE_LENGTH     20
+#define TIME_LENGTH     32
+
 
 static int report(void *, int, char **, char **);
 static int sink(void *, int, char **, char **);
@@ -35,8 +37,7 @@ main(int argc, char *argv[])
 
   // This will create a new ~/.tardis.db file if one does not exist..
   // TODO: fix this hardcoded value
-  // result_code = sqlite3_open("/Users/will/.tardis.db", &db);
-  result_code = sqlite3_open("tardis.db", &db);
+  result_code = sqlite3_open("/Users/will/.tardis.db", &db);
   if (result_code) {
     fprintf(stderr, "%s\n", sqlite3_errmsg(db));
     sqlite3_close(db);
@@ -135,11 +136,31 @@ main(int argc, char *argv[])
 
 static int
 report(void *not_used, int argc, char *argv[], char *az_col_name[]) {
-  printf("| %-14s | %14s |\n", argv[0], argv[1] ? argv[1] : "NULL");
+  long time_spent = argv[1];
+
+  printf("| %-14s | %14s |\n", argv[0], time_spent);
   return 0;
 }
 
 static int
 sink(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   return 0;
+}
+
+char *
+seconds_to_time(int seconds) {
+  int h, m, s;
+  static char buff[TIME_LENGTH];
+
+  if (seconds > 0) {
+    h = seconds / 3600;
+    m = seconds / 60;
+    s = seconds % 60;
+  } else {
+    return 0;
+  }
+
+  sprintf(buff, "%dh %dm %ds", h, m, s);
+
+  return buff;
 }
