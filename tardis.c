@@ -22,7 +22,7 @@ main(int argc, char *argv[])
   struct tm    *timeinfo;
   static char  *time_format = "%Y-%m-%d %H:%M:%S";
 
-  if (argc < 2 || argc > 3) {
+  if (argc < 2) {
     fprintf(stderr, "Usage: %s project_name [description]\n", argv[0]);
     exit(EXIT_FAILURE);
   }
