@@ -1,3 +1,0 @@
-#!/bin/bash
-
-sqlite3 ~/.tardis.db "select project, sum(strftime('%s',end) - strftime('%s',start)) from entries group by project"
