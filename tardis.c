@@ -24,7 +24,7 @@
 #define DATE_LENGTH     20
 #define TIME_LENGTH     32
 
-static int report(void *, int, char **, char **);
+static int report_row(void *, int, char **, char **);
 static int sink(void *, int, char **, char **);
 char *seconds_to_time_string(int);
 
@@ -134,7 +134,7 @@ main(int argc, char *argv[])
       "select project, \
         sum(strftime('%s',end) - strftime('%s',start)) as seconds \
         from entries group by project";
-    result_code = sqlite3_exec(db, report_sql, report, 0, &error_message);
+    result_code = sqlite3_exec(db, report_sql, report_row, 0, &error_message);
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
       sqlite3_free(error_message);
@@ -202,7 +202,7 @@ main(int argc, char *argv[])
 // Callback Functions
 // -----------------------------------------------------------------------------
 static int
-report(void *not_used, int argc, char *argv[], char *az_col_name[]) {
+report_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   long time_spent = argv[1] ? atoi(argv[1]) : 0;
 
   printf("| %-21s | %12s |\n", argv[0], seconds_to_time_string(time_spent));
