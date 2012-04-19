@@ -27,6 +27,7 @@
 static int report(void *, int, char **, char **);
 static int sink(void *, int, char **, char **);
 char *seconds_to_time_string(int);
+char *escape(char *);
 
 int
 main(int argc, char *argv[])
@@ -234,4 +235,31 @@ seconds_to_time_string(int seconds) {
   sprintf(buff, "%2dh %2dm %2ds", h, m, s);
 
   return buff;
+}
+
+char *
+escape(char *query) {
+  
+  sprintf();
+  return "";
+}
+
+char *
+str_replace(char *str, char *orig, char *rep)
+{
+  static char buffer[BUFFER_SIZE];
+  char *p;
+  long d;
+
+  p = strstr(str, orig);
+  d = p - str;
+
+  if (!p) return str;
+
+  strncpy(buffer, str, d);
+  buffer[d] = '\0';
+
+  sprintf(buffer + d, "%s%s", rep, p + strlen(orig));
+
+  return buffer;
 }
