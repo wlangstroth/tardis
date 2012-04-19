@@ -49,12 +49,11 @@ main(int argc, char *argv[])
   char *description;
 
   static struct commands[] = {
-    { "add", add_cmd },
-    { "all", all_cmd },
-    { "report", report_cmd },
-    { "start", start_cmd },
-    { "stop", stop_cmd },
-
+    { "add",    NULL, add_cmd },
+    { "all",    NULL, all_cmd },
+    { "report", "r",  report_cmd },
+    { "start",  "s",  start_cmd },
+    { "stop",   NULL, stop_cmd },
   };
 
   static char *insert_template =
@@ -194,34 +193,6 @@ main(int argc, char *argv[])
     sprintf(add_sql, add_template, project, start, end, escape(description));
 
     result_code = sqlite3_exec(db, add_sql, sink, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "SQL error: %s\n", error_message);
-      sqlite3_free(error_message);
-    }
-
-  } else if (!strcmp(mode, "switch")) {
-// -----------------------------------------------------------------------------
-// Switch Mode
-// -----------------------------------------------------------------------------
-
-    if (argc != 2) {
-      fprintf(stderr, "Usage: %s switch\n", argv[0]);
-      exit(EXIT_FAILURE);
-    }
-
-    time(&rawtime);
-    timeinfo = gmtime(&rawtime);
-    strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
-
-    sprintf(update_sql, update_template, date_buffer);
-    result_code = sqlite3_exec(db, update_sql, sink, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "SQL error: %s\n", error_message);
-      sqlite3_free(error_message);
-    }
-
-    sprintf(insert_sql, insert_template, "switch", "");
-    result_code = sqlite3_exec(db, insert_sql, sink, 0, &error_message);
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
       sqlite3_free(error_message);
