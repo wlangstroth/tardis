@@ -30,7 +30,6 @@ static int sink(void *, int, char **, char **);
 char *seconds_to_time_string(int);
 char *escape(char *);
 char *str_replace(char *, char *, char *);
-char *str_replace_all(const char *, const char *, const char *);
 
 int
 main(int argc, char *argv[])
@@ -48,6 +47,15 @@ main(int argc, char *argv[])
   static char  *time_format = "%Y-%m-%d %H:%M:%S";
   char *project;
   char *description;
+
+  static struct commands[] = {
+    { "add", add_cmd },
+    { "all", all_cmd },
+    { "report", report_cmd },
+    { "start", start_cmd },
+    { "stop", stop_cmd },
+
+  };
 
   static char *insert_template =
     "insert into entries(project, description) values('%s','%s')";
@@ -196,7 +204,6 @@ main(int argc, char *argv[])
 // Switch Mode
 // -----------------------------------------------------------------------------
 
-    // same as `tardis s switch`
     if (argc != 2) {
       fprintf(stderr, "Usage: %s switch\n", argv[0]);
       exit(EXIT_FAILURE);
@@ -214,37 +221,6 @@ main(int argc, char *argv[])
     }
 
     sprintf(insert_sql, insert_template, "switch", "");
-    result_code = sqlite3_exec(db, insert_sql, sink, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "SQL error: %s\n", error_message);
-      sqlite3_free(error_message);
-    }
-
-  } else if (!strcmp(mode, "all")) {
-// -----------------------------------------------------------------------------
-// Switch Mode
-// -----------------------------------------------------------------------------
-
-    if (argc != 2) {
-      fprintf(stderr, "Usage: %s all\n", argv[0]);
-      exit(EXIT_FAILURE);
-    }
-
-    project = argv[2];
-    description = argv[3];
-
-    time(&rawtime);
-    timeinfo = gmtime(&rawtime);
-    strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
-
-    sprintf(update_sql, update_template, date_buffer);
-    result_code = sqlite3_exec(db, update_sql, sink, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "SQL error: %s\n", error_message);
-      sqlite3_free(error_message);
-    }
-
-    sprintf(insert_sql, insert_template, project, description);
     result_code = sqlite3_exec(db, insert_sql, sink, 0, &error_message);
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
@@ -337,7 +313,7 @@ escape(char *query) {
 char *
 str_replace(const char *str, const char *old, const char *new)
 {
-  static char buffer[BUFFER_LENGTH];
+  const char buffer[BUFFER_LENGTH];
   char *p;
   long d;
 
