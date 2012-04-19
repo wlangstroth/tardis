@@ -24,7 +24,8 @@
 #define DATE_LENGTH     20
 #define TIME_LENGTH     32
 
-static int report(void *, int, char **, char **);
+static int report_row(void *, int, char **, char **);
+static int all_row(void *, int, char **, char **);
 static int sink(void *, int, char **, char **);
 char *seconds_to_time_string(int);
 char *escape(char *);
@@ -138,13 +139,32 @@ main(int argc, char *argv[])
       "select project, \
         sum(strftime('%s',end) - strftime('%s',start)) as seconds \
         from entries group by project";
-    result_code = sqlite3_exec(db, report_sql, report, 0, &error_message);
+    result_code = sqlite3_exec(db, report_sql, report_row, 0, &error_message);
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
       sqlite3_free(error_message);
     }
 
     printf("+-----------------------+--------------+\n");
+
+  } else if (!strcmp(mode, "all")) {
+// -----------------------------------------------------------------------------
+// All Mode
+// -----------------------------------------------------------------------------
+
+    printf("+---------------------------------------------+-------------------------+-------------------------------\n");
+    printf("| time                                        | project                 | description                    \n");
+    printf("+---------------------------------------------+-------------------------+-------------------------------\n");
+
+    static char *all_sql =
+      "select start, end, project, description from entries order by start";
+    result_code = sqlite3_exec(db, all_sql, all_row, 0, &error_message);
+    if (result_code) {
+      fprintf(stderr, "SQL error: %s\n", error_message);
+      sqlite3_free(error_message);
+    }
+
+    printf("+---------------------------------------------+-------------------------+-------------------------------\n");
 
   } else if (!strcmp(mode, "add")) {
 // -----------------------------------------------------------------------------
@@ -166,6 +186,66 @@ main(int argc, char *argv[])
     sprintf(add_sql, add_template, project, start, end, escape(description));
 
     result_code = sqlite3_exec(db, add_sql, sink, 0, &error_message);
+    if (result_code) {
+      fprintf(stderr, "SQL error: %s\n", error_message);
+      sqlite3_free(error_message);
+    }
+
+  } else if (!strcmp(mode, "switch")) {
+// -----------------------------------------------------------------------------
+// Switch Mode
+// -----------------------------------------------------------------------------
+
+    // same as `tardis s switch`
+    if (argc != 2) {
+      fprintf(stderr, "Usage: %s switch\n", argv[0]);
+      exit(EXIT_FAILURE);
+    }
+
+    time(&rawtime);
+    timeinfo = gmtime(&rawtime);
+    strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
+
+    sprintf(update_sql, update_template, date_buffer);
+    result_code = sqlite3_exec(db, update_sql, sink, 0, &error_message);
+    if (result_code) {
+      fprintf(stderr, "SQL error: %s\n", error_message);
+      sqlite3_free(error_message);
+    }
+
+    sprintf(insert_sql, insert_template, "switch", "");
+    result_code = sqlite3_exec(db, insert_sql, sink, 0, &error_message);
+    if (result_code) {
+      fprintf(stderr, "SQL error: %s\n", error_message);
+      sqlite3_free(error_message);
+    }
+
+  } else if (!strcmp(mode, "all")) {
+// -----------------------------------------------------------------------------
+// Switch Mode
+// -----------------------------------------------------------------------------
+
+    if (argc != 2) {
+      fprintf(stderr, "Usage: %s all\n", argv[0]);
+      exit(EXIT_FAILURE);
+    }
+
+    project = argv[2];
+    description = argv[3];
+
+    time(&rawtime);
+    timeinfo = gmtime(&rawtime);
+    strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
+
+    sprintf(update_sql, update_template, date_buffer);
+    result_code = sqlite3_exec(db, update_sql, sink, 0, &error_message);
+    if (result_code) {
+      fprintf(stderr, "SQL error: %s\n", error_message);
+      sqlite3_free(error_message);
+    }
+
+    sprintf(insert_sql, insert_template, project, description);
+    result_code = sqlite3_exec(db, insert_sql, sink, 0, &error_message);
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
       sqlite3_free(error_message);
@@ -206,10 +286,16 @@ main(int argc, char *argv[])
 // Callback Functions
 // -----------------------------------------------------------------------------
 static int
-report(void *not_used, int argc, char *argv[], char *az_col_name[]) {
+report_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   long time_spent = argv[1] ? atoi(argv[1]) : 0;
 
   printf("| %-21s | %12s |\n", argv[0], seconds_to_time_string(time_spent));
+  return 0;
+}
+
+static int
+all_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
+  printf("| %s to %s | %s | %s |\n", argv[0], argv[1], argv[2], argv[3]);
   return 0;
 }
 

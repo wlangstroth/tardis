@@ -4,3 +4,7 @@
 * man page
 * Move modes to their own files
 * Handle modes with a struct
+* Report range: tardis report 2012-04-03 is since, tardis report 2012-04-03 2012-04-04 is from-to
+
+entries(id, start, project, description, end)
+estimates(id, project, description, projected, actual)
