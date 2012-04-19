@@ -335,7 +335,7 @@ escape(char *query) {
 }
 
 char *
-str_newlace(const char *str, const char *old, const char *new)
+str_replace(const char *str, const char *old, const char *new)
 {
   static char buffer[BUFFER_LENGTH];
   char *p;
