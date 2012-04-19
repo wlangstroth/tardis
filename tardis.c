@@ -28,6 +28,8 @@ static int report(void *, int, char **, char **);
 static int sink(void *, int, char **, char **);
 char *seconds_to_time_string(int);
 char *escape(char *);
+char *str_replace(char *, char *, char *);
+char *str_replace_all(const char *, const char *, const char *);
 
 int
 main(int argc, char *argv[])
@@ -109,7 +111,8 @@ main(int argc, char *argv[])
       sqlite3_free(error_message);
     }
 
-    sprintf(insert_sql, insert_template, project, description);
+    sprintf(insert_sql, insert_template, project, escape(description));
+    printf("%s", insert_sql);
     result_code = sqlite3_exec(db, insert_sql, sink, 0, &error_message);
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
@@ -160,7 +163,7 @@ main(int argc, char *argv[])
     static char *add_template =
       "insert into entries(project, start, end, description) values('%s','%s','%s','%s')";
 
-    sprintf(add_sql, add_template, project, start, end, description);
+    sprintf(add_sql, add_template, project, start, end, escape(description));
 
     result_code = sqlite3_exec(db, add_sql, sink, 0, &error_message);
     if (result_code) {
@@ -239,19 +242,20 @@ seconds_to_time_string(int seconds) {
 
 char *
 escape(char *query) {
-  
-  sprintf();
-  return "";
+  static char buffer[BUFFER_LENGTH];
+  char new_string[BUFFER_LENGTH];
+
+  return new_string;
 }
 
 char *
-str_replace(char *str, char *orig, char *rep)
+str_newlace(const char *str, const char *old, const char *new)
 {
-  static char buffer[BUFFER_SIZE];
+  static char buffer[BUFFER_LENGTH];
   char *p;
   long d;
 
-  p = strstr(str, orig);
+  p = strstr(str, old);
   d = p - str;
 
   if (!p) return str;
@@ -259,7 +263,7 @@ str_replace(char *str, char *orig, char *rep)
   strncpy(buffer, str, d);
   buffer[d] = '\0';
 
-  sprintf(buffer + d, "%s%s", rep, p + strlen(orig));
+  sprintf(buffer + d, "%s%s", new, p + strlen(old));
 
   return buffer;
 }
