@@ -25,15 +25,6 @@ You can also shorten "start" to "s", like so:
     $ tardis s another-project "this is a different project"
 
 
-Scripts
--------
-
-There are some convenience scripts in the script/ directory.
-
-all: view all entries
-clear: delete all entries
-
-
 Dependencies
 ------------
 
