@@ -100,11 +100,11 @@ main(int argc, char *argv[])
 
   const char *create_entries_sql =
     "create table if not exists entries(        \
-      id integer primary key autoincrement,     \
-      start datetime default current_timestamp, \
-      project text,                             \
-      description text,                         \
-      end datetime)";
+     id integer primary key autoincrement,      \
+     start datetime default current_timestamp,  \
+     project text,                              \
+     description text,                          \
+     end datetime)";
 
   result_code = sqlite3_exec(db, create_entries_sql, sink, 0, &error_message);
   if (result_code) {
@@ -115,11 +115,11 @@ main(int argc, char *argv[])
   // the estimate integer is in seconds
   // TODO: write conversion function
   const char *create_estimates_sql =
-    "create table if not exists estimates(      \
-      id integer primary key autoincrement,     \
-      project text,                             \
-      description text,                         \
-      estimate integer)";
+    "create table if not exists estimates(  \
+     id integer primary key autoincrement,  \
+     project text,                          \
+     description text,                      \
+     estimate integer)";
 
   result_code = sqlite3_exec(db, create_estimates_sql, sink, 0, &error_message);
   if (result_code) {
@@ -174,14 +174,35 @@ main(int argc, char *argv[])
 // Report Mode
 // -----------------------------------------------------------------------------
 
+
+    static char *report_template =
+      "select project,                                    \
+       sum(strftime('%%s',end) - strftime('%%s',start))   \
+       from entries                                       \
+       %s                                                 \
+       group by project";
+
+    static char report_sql[BUFFER_LENGTH];
+    static char where_clause[BUFFER_LENGTH];
+
+    if (argc == 2) {
+      sprintf(report_sql, report_template, "");
+    }
+
+    if (argc == 3) {
+      sprintf(where_clause, "where date(start) = '%s'", argv[2]);
+      sprintf(report_sql, report_template, where_clause);
+    }
+
+    if (argc == 4) {
+      sprintf(where_clause, "where date(start) between '%s' and '%s'", argv[2], argv[3]);
+      sprintf(report_sql, report_template, where_clause);
+    }
+
     printf("+-----------------------+--------------+\n");
     printf("| project               | time         |\n");
     printf("+-----------------------+--------------+\n");
 
-    static char *report_sql =
-      "select project, \
-        sum(strftime('%s',end) - strftime('%s',start)) as seconds \
-        from entries group by project";
     result_code = sqlite3_exec(db, report_sql, report_row, 0, &error_message);
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
@@ -195,19 +216,24 @@ main(int argc, char *argv[])
 // All Mode
 // -----------------------------------------------------------------------------
 
-    printf("+---------------------------------------------+-------------------------+-------------------------------\n");
-    printf("| time                                        | project                 | description                    \n");
-    printf("+---------------------------------------------+-------------------------+-------------------------------\n");
+    printf("+-----------------------------+----------------------+----------------------------------------------------+\n");
+    printf("| time                        | project              | description                                        |\n");
+    printf("+-----------------------------+----------------------+----------------------------------------------------+\n");
 
     static char *all_sql =
-      "select start, end, project, description from entries order by start";
+      "select date(start),        \
+        strftime('%H:%M', start), \
+        strftime('%H:%M', end),   \
+        project, description      \
+       from entries               \
+       order by start";
     result_code = sqlite3_exec(db, all_sql, all_row, 0, &error_message);
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
       sqlite3_free(error_message);
     }
 
-    printf("+---------------------------------------------+-------------------------+-------------------------------\n");
+    printf("+-----------------------------+----------------------+----------------------------------------------------+\n");
 
   } else if (!strcmp(mode, "add")) {
 // -----------------------------------------------------------------------------
@@ -278,7 +304,9 @@ report_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
 
 static int
 all_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
-  printf("| %s to %s | %s | %s |\n", argv[0], argv[1], argv[2], argv[3]);
+  char *end_time = argv[2] ? argv[2] : "     ";
+
+  printf("| %s - %s to %s | %-20s | %-50s |\n", argv[0], argv[1], end_time, argv[3], argv[4]);
   return 0;
 }
 
