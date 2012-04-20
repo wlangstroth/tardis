@@ -97,7 +97,7 @@ main(int argc, char *argv[])
     exit(EXIT_FAILURE);
   }
 
-  const char *create_sql =
+  const char *create_entries_sql =
     "create table if not exists entries(        \
       id integer primary key autoincrement,     \
       start datetime default current_timestamp, \
@@ -105,12 +105,30 @@ main(int argc, char *argv[])
       description text,                         \
       end datetime)";
 
-  result_code = sqlite3_exec(db, create_sql, sink, 0, &error_message);
+  result_code = sqlite3_exec(db, create_entries_sql, sink, 0, &error_message);
   if (result_code) {
     fprintf(stderr, "SQL error: %s\n", error_message);
     sqlite3_free(error_message);
   }
 
+  const char *create_estimates_sql =
+    "create table if not exists estimates(      \
+      id integer primary key autoincrement,     \
+      project text,                             \
+      description text,                         \
+      estimate integer)";
+
+  result_code = sqlite3_exec(db, create_estimates_sql, sink, 0, &error_message);
+  if (result_code) {
+    fprintf(stderr, "SQL error: %s\n", error_message);
+    sqlite3_free(error_message);
+  }
+
+  if (!strcmp(mode, "estimate")) {
+// -----------------------------------------------------------------------------
+// Start Mode
+// -----------------------------------------------------------------------------
+//
   if (!strcmp(mode, "s") || !strcmp(mode, "start")) {
 // -----------------------------------------------------------------------------
 // Start Mode
