@@ -27,6 +27,7 @@
 static int report_row(void *, int, char **, char **);
 static int all_row(void *, int, char **, char **);
 static int sink(void *, int, char **, char **);
+int time_string_to_seconds(char *);
 char *seconds_to_time_string(int);
 char *str_replace_all(const char *, const char *, const char *);
 char *escape(const char *);
@@ -111,6 +112,8 @@ main(int argc, char *argv[])
     sqlite3_free(error_message);
   }
 
+  // the estimate integer is in seconds
+  // TODO: write conversion function
   const char *create_estimates_sql =
     "create table if not exists estimates(      \
       id integer primary key autoincrement,     \
@@ -126,10 +129,10 @@ main(int argc, char *argv[])
 
   if (!strcmp(mode, "estimate")) {
 // -----------------------------------------------------------------------------
-// Start Mode
+// Estimate Mode
 // -----------------------------------------------------------------------------
-//
-  if (!strcmp(mode, "s") || !strcmp(mode, "start")) {
+
+  } else if (!strcmp(mode, "s") || !strcmp(mode, "start")) {
 // -----------------------------------------------------------------------------
 // Start Mode
 // -----------------------------------------------------------------------------
@@ -306,36 +309,47 @@ seconds_to_time_string(int seconds) {
   return buff;
 }
 
+int
+time_string_to_seconds(char *time_string) {
+  return 1;
+}
+
 char *
-str_replace_all( const char *string, const char *substr, const char *replacement ) {
+str_replace_all(const char *string, const char *substr, const char *replacement) {
   char *token = NULL;
   char *new_string = NULL;
   char *old_string = NULL;
   char *head = NULL;
+  size_t delta;
+  size_t rep_length = strlen(replacement);
+  size_t sub_length = strlen(substr);
+  size_t old_length;
 
   if (substr == NULL || replacement == NULL)
-    return strdup (string);
+    return strdup(string);
 
-  new_string = strdup (string);
+  new_string = strdup(string);
   head = new_string;
 
   while ((token = strstr(head, substr))) {
     old_string = new_string;
-    new_string = malloc(strlen(old_string) - strlen(substr) + strlen(replacement) + 1);
+    new_string = malloc(strlen(old_string) - strlen(substr) + rep_length + 1);
 
     if (new_string == NULL) {
-      free (old_string);
+      free(old_string);
       return NULL;
     }
 
-    memcpy(new_string, old_string, token - old_string);
-    memcpy(new_string + (token - old_string), replacement, strlen(replacement));
-    memcpy(new_string + (token - old_string) + strlen(replacement),
-           token + strlen(substr),
-           strlen(old_string) - strlen(substr) - (token - old_string));
-    memset(new_string + strlen (old_string) - strlen(substr) + strlen (replacement), 0, 1);
+    delta = token - old_string;
+    old_length = strlen(old_string);
 
-    head = new_string + (token - old_string) + strlen( replacement );
+    memcpy(new_string, old_string, delta);
+    memcpy(new_string + delta, replacement, rep_length);
+    memcpy(new_string + delta + rep_length, token + sub_length, old_length - sub_length - delta);
+
+    memset(new_string + old_length - sub_length + rep_length, 0, 1);
+
+    head = new_string + delta + rep_length;
     free (old_string);
   }
   return new_string;
