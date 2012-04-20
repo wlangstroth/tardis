@@ -199,9 +199,9 @@ main(int argc, char *argv[])
       sprintf(report_sql, report_template, where_clause);
     }
 
-    printf("+-----------------------+--------------+\n");
-    printf("| project               | time         |\n");
-    printf("+-----------------------+--------------+\n");
+    printf("┌───────────────────────┬──────────────┐\n");
+    printf("│ project               │ time         │\n");
+    printf("├───────────────────────┼──────────────┤\n");
 
     result_code = sqlite3_exec(db, report_sql, report_row, 0, &error_message);
     if (result_code) {
@@ -209,16 +209,16 @@ main(int argc, char *argv[])
       sqlite3_free(error_message);
     }
 
-    printf("+-----------------------+--------------+\n");
+    printf("└───────────────────────┴──────────────┘\n");
 
   } else if (!strcmp(mode, "all")) {
 // -----------------------------------------------------------------------------
 // All Mode
 // -----------------------------------------------------------------------------
 
-    printf("+-----------------------------+----------------------+----------------------------------------------------+\n");
-    printf("| time                        | project              | description                                        |\n");
-    printf("+-----------------------------+----------------------+----------------------------------------------------+\n");
+    printf("┌─────────────────────────────┬──────────────────────┬────────────────────────────────────────────────────┐\n");
+    printf("│ time                        │ project              │ description                                        │\n");
+    printf("├─────────────────────────────┼──────────────────────┼────────────────────────────────────────────────────┤\n");
 
     static char *all_sql =
       "select date(start, 'localtime'),        \
@@ -233,7 +233,7 @@ main(int argc, char *argv[])
       sqlite3_free(error_message);
     }
 
-    printf("+-----------------------------+----------------------+----------------------------------------------------+\n");
+    printf("└─────────────────────────────┴──────────────────────┴────────────────────────────────────────────────────┘\n");
 
   } else if (!strcmp(mode, "add")) {
 // -----------------------------------------------------------------------------
@@ -299,7 +299,7 @@ static int
 report_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   long time_spent = argv[1] ? atoi(argv[1]) : 0;
 
-  printf("| %-21s | %12s |\n", argv[0], seconds_to_time_string(time_spent));
+  printf("│ %-21s │ %12s │\n", argv[0], seconds_to_time_string(time_spent));
   return 0;
 }
 
@@ -307,7 +307,7 @@ static int
 all_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   char *end_time = argv[2] ? argv[2] : "     ";
 
-  printf("| %s - %s to %s | %-20s | %-50s |\n", argv[0], argv[1], end_time, argv[3], argv[4]);
+  printf("│ %s - %s to %s │ %-20s │ %-50s │\n", argv[0], argv[1], end_time, argv[3], argv[4]);
   return 0;
 }
 
