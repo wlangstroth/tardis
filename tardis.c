@@ -136,7 +136,7 @@ main(int argc, char *argv[])
 // Parse modes
 // -----------------------------------------------------------------------------
 
-  if (!strcmp(mode, "t") || !strcmp(mode, "task")) {
+  if (!strcmp(mode, "task") || !strcmp(mode, "t")) {
 // -----------------------------------------------------------------------------
 // Item Mode
 // -----------------------------------------------------------------------------
@@ -146,7 +146,7 @@ main(int argc, char *argv[])
       exit(EXIT_FAILURE);
     }
 
-  } else if (!strcmp(mode, "s") || !strcmp(mode, "start")) {
+  } else if (!strcmp(mode, "start") || !strcmp(mode, "s")) {
 // -----------------------------------------------------------------------------
 // Start Mode
 // -----------------------------------------------------------------------------
@@ -157,7 +157,7 @@ main(int argc, char *argv[])
     }
 
     project = argv[2];
-    description = argv[3];
+    description = argv[3] ? argv[3] : "";
 
     time(&rawtime);
     timeinfo = gmtime(&rawtime);
