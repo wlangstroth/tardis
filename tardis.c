@@ -118,15 +118,15 @@ main(int argc, char *argv[])
 
   // the estimate integer is in seconds
   // TODO: write conversion function
-  const char *create_items_sql =
-    "create table if not exists items(        \
+  const char *create_tasks_sql =
+    "create table if not exists tasks(        \
      id integer primary key autoincrement,    \
      stamp datetime default current_datetime, \
      project text,                            \
      description text,                        \
      estimate integer)";
 
-  result_code = sqlite3_exec(db, create_items_sql, sink, 0, &error_message);
+  result_code = sqlite3_exec(db, create_tasks_sql, sink, 0, &error_message);
   if (result_code) {
     fprintf(stderr, "SQL error: %s\n", error_message);
     sqlite3_free(error_message);
@@ -136,13 +136,13 @@ main(int argc, char *argv[])
 // Parse modes
 // -----------------------------------------------------------------------------
 
-  if (!strcmp(mode, "i") || !strcmp(mode, "item")) {
+  if (!strcmp(mode, "t") || !strcmp(mode, "task")) {
 // -----------------------------------------------------------------------------
 // Item Mode
 // -----------------------------------------------------------------------------
 
     if (argc < 4) {
-      fprintf(stderr, "Usage: %s i[tem] <project_name> <description> <estimate>\n", argv[0]);
+      fprintf(stderr, "Usage: %s t[ask] <project_name> <description> <estimate>\n", argv[0]);
       exit(EXIT_FAILURE);
     }
 
