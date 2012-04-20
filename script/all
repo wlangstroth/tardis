@@ -1,3 +1,0 @@
-#!/bin/bash
-
-sqlite3 ~/.tardis.db "select * from entries order by start"
