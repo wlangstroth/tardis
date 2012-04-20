@@ -1,6 +1,5 @@
-* Escape input
 * Batch export to Harvest (harvestapp.com)
-* Table as export log (with a last exported timestamp)
+    sqlite3 ~/.tardis.db ".dump entries" | grep '^INSERT'
 * man page
 * Move modes to their own files
 * Handle modes with a struct
