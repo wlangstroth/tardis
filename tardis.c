@@ -27,6 +27,7 @@
 static int report_row(void *, int, char **, char **);
 static int all_row(void *, int, char **, char **);
 static int sink(void *, int, char **, char **);
+static int export_row(void *, int, char **, char **);
 int time_string_to_seconds(char *);
 char *seconds_to_time_string(int);
 char *str_replace_all(const char *, const char *, const char *);
@@ -98,6 +99,10 @@ main(int argc, char *argv[])
     exit(EXIT_FAILURE);
   }
 
+// -----------------------------------------------------------------------------
+// Table set-up
+// -----------------------------------------------------------------------------
+
   const char *create_entries_sql =
     "create table if not exists entries(        \
      id integer primary key autoincrement,      \
@@ -114,23 +119,33 @@ main(int argc, char *argv[])
 
   // the estimate integer is in seconds
   // TODO: write conversion function
-  const char *create_estimates_sql =
-    "create table if not exists estimates(  \
-     id integer primary key autoincrement,  \
-     project text,                          \
-     description text,                      \
+  const char *create_items_sql =
+    "create table if not exists items(        \
+     id integer primary key autoincrement,    \
+     stamp datetime default current_datetime, \
+     project text,                            \
+     description text,                        \
      estimate integer)";
 
-  result_code = sqlite3_exec(db, create_estimates_sql, sink, 0, &error_message);
+  result_code = sqlite3_exec(db, create_items_sql, sink, 0, &error_message);
   if (result_code) {
     fprintf(stderr, "SQL error: %s\n", error_message);
     sqlite3_free(error_message);
   }
 
-  if (!strcmp(mode, "estimate")) {
 // -----------------------------------------------------------------------------
-// Estimate Mode
+// Parse modes
 // -----------------------------------------------------------------------------
+
+  if (!strcmp(mode, "i") || !strcmp(mode, "item")) {
+// -----------------------------------------------------------------------------
+// Item Mode
+// -----------------------------------------------------------------------------
+
+    if (argc < 4) {
+      fprintf(stderr, "Usage: %s i[tem] <project_name> <description> <estimate>\n", argv[0]);
+      exit(EXIT_FAILURE);
+    }
 
   } else if (!strcmp(mode, "s") || !strcmp(mode, "start")) {
 // -----------------------------------------------------------------------------
@@ -138,7 +153,7 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 
     if (argc < 3) {
-      fprintf(stderr, "Usage: %s s[tart] project_name [description]\n", argv[0]);
+      fprintf(stderr, "Usage: %s s[tart] <project_name> [<description>]\n", argv[0]);
       exit(EXIT_FAILURE);
     }
 
@@ -162,12 +177,6 @@ main(int argc, char *argv[])
       fprintf(stderr, "SQL error: %s\n", error_message);
       sqlite3_free(error_message);
     }
-
-  } else if (!strcmp(mode, "export")) {
-// -----------------------------------------------------------------------------
-// Export Mode
-// -----------------------------------------------------------------------------
-    printf("Export to Harvest coming soon.\n");
 
   } else if (!strcmp(mode, "report")) {
 // -----------------------------------------------------------------------------
