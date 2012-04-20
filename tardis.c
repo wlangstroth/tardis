@@ -177,7 +177,7 @@ main(int argc, char *argv[])
 
     static char *report_template =
       "select project,                                    \
-       sum(strftime('%%s',end) - strftime('%%s',start))   \
+       sum(strftime('%%s',end) - strftime('%%s', start))  \
        from entries                                       \
        %s                                                 \
        group by project";
@@ -190,12 +190,12 @@ main(int argc, char *argv[])
     }
 
     if (argc == 3) {
-      sprintf(where_clause, "where date(start) = '%s'", argv[2]);
+      sprintf(where_clause, "where date(start, 'localtime') = '%s'", argv[2]);
       sprintf(report_sql, report_template, where_clause);
     }
 
     if (argc == 4) {
-      sprintf(where_clause, "where date(start) between '%s' and '%s'", argv[2], argv[3]);
+      sprintf(where_clause, "where date(start, 'localtime') between '%s' and '%s'", argv[2], argv[3]);
       sprintf(report_sql, report_template, where_clause);
     }
 
@@ -221,9 +221,9 @@ main(int argc, char *argv[])
     printf("+-----------------------------+----------------------+----------------------------------------------------+\n");
 
     static char *all_sql =
-      "select date(start),        \
-        strftime('%H:%M', start), \
-        strftime('%H:%M', end),   \
+      "select date(start, 'localtime'),        \
+        strftime('%H:%M', start, 'localtime'), \
+        strftime('%H:%M', end, 'localtime'),   \
         project, description      \
        from entries               \
        order by start";
@@ -250,7 +250,8 @@ main(int argc, char *argv[])
     char *end = argv[4];
     description = argv[5];
     static char *add_template =
-      "insert into entries(project, start, end, description) values('%s','%s','%s','%s')";
+      "insert into entries(project, start, end, description) \
+      values('%s',datetime('%s', 'utc'),datetime('%s', 'utc'),'%s')";
 
     sprintf(add_sql, add_template, project, start, end, escape(description));
 
