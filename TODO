@@ -3,3 +3,4 @@
 * man page
 * Move modes to their own files
 * Handle modes with a struct
+* Estimates on project tasks, with corresponding links
