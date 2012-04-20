@@ -28,7 +28,6 @@ static int report_row(void *, int, char **, char **);
 static int all_row(void *, int, char **, char **);
 static int sink(void *, int, char **, char **);
 char *seconds_to_time_string(int);
-char *str_replace(char *, const char *, const char *);
 char *str_replace_all(const char *, const char *, const char *);
 char *escape(const char *);
 
@@ -287,26 +286,6 @@ seconds_to_time_string(int seconds) {
   sprintf(buff, "%2dh %2dm %2ds", h, m, s);
 
   return buff;
-}
-
-char *
-str_replace(char *str, const char *old, const char *new)
-{
-  static char buffer[BUFFER_LENGTH];
-  char *p;
-  long delta;
-
-  if (!(p = strstr(str, old)))
-    return str;
-
-  delta = p - str;
-
-  strncpy(buffer, str, delta);
-  buffer[delta] = '\0';
-
-  sprintf(buffer + delta, "%s%s", new, p + strlen(old));
-
-  return buffer;
 }
 
 char *
