@@ -27,7 +27,6 @@
 static int report_row(void *, int, char **, char **);
 static int all_row(void *, int, char **, char **);
 static int sink(void *, int, char **, char **);
-static int export_row(void *, int, char **, char **);
 int time_string_to_seconds(char *);
 char *seconds_to_time_string(int);
 char *str_replace_all(const char *, const char *, const char *);
