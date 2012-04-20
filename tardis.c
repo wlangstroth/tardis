@@ -28,8 +28,17 @@ static int report_row(void *, int, char **, char **);
 static int all_row(void *, int, char **, char **);
 static int sink(void *, int, char **, char **);
 char *seconds_to_time_string(int);
-char *escape(char *);
-char *str_replace(char *, char *, char *);
+char *str_replace(char *, const char *, const char *);
+char *str_replace_all(const char *, const char *, const char *);
+char *escape(const char *);
+
+/*
+int add_cmd(char **);
+int all_cmd(char **);
+int report_cmd(char **);
+int start_cmd(char **);
+int stop_cmd(char **);
+*/
 
 int
 main(int argc, char *argv[])
@@ -48,17 +57,25 @@ main(int argc, char *argv[])
   char *project;
   char *description;
 
-  static struct commands[] = {
-    { "add",    NULL, add_cmd },
-    { "all",    NULL, all_cmd },
-    { "report", "r",  report_cmd },
-    { "start",  "s",  start_cmd },
-    { "stop",   NULL, stop_cmd },
+/*
+  struct cmd {
+    const char *command;
+    const char *short_form;
+    int (*fn)(char **);
   };
 
-  static char *insert_template =
+  static struct cmd commands[] = {
+    { "add",    NULL, add_cmd     },
+    { "all",    NULL, all_cmd     },
+    { "report", "r",  report_cmd  },
+    { "start",  "s",  start_cmd   },
+    { "stop",   NULL, stop_cmd    }
+  };
+*/
+
+  const char *insert_template =
     "insert into entries(project, description) values('%s','%s')";
-  static char *update_template =
+  const char *update_template =
     "update entries \
       set end='%s'  \
       where start = (select max(start) from entries)";
@@ -81,7 +98,7 @@ main(int argc, char *argv[])
     exit(EXIT_FAILURE);
   }
 
-  static char *create_sql =
+  const char *create_sql =
     "create table if not exists entries(        \
       id integer primary key autoincrement,     \
       start datetime default current_timestamp, \
@@ -120,7 +137,6 @@ main(int argc, char *argv[])
     }
 
     sprintf(insert_sql, insert_template, project, escape(description));
-    printf("%s", insert_sql);
     result_code = sqlite3_exec(db, insert_sql, sink, 0, &error_message);
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
@@ -274,29 +290,93 @@ seconds_to_time_string(int seconds) {
 }
 
 char *
-escape(char *query) {
+str_replace(char *str, const char *old, const char *new)
+{
   static char buffer[BUFFER_LENGTH];
-  char new_string[BUFFER_LENGTH];
+  char *p;
+  long delta;
 
+  if (!(p = strstr(str, old)))
+    return str;
+
+  delta = p - str;
+
+  strncpy(buffer, str, delta);
+  buffer[delta] = '\0';
+
+  sprintf(buffer + delta, "%s%s", new, p + strlen(old));
+
+  return buffer;
+}
+
+char *
+str_replace_all( const char *string, const char *substr, const char *replacement ) {
+  char *token = NULL;
+  char *new_string = NULL;
+  char *old_string = NULL;
+  char *head = NULL;
+
+  if (substr == NULL || replacement == NULL)
+    return strdup (string);
+
+  new_string = strdup (string);
+  head = new_string;
+
+  while ((token = strstr(head, substr))) {
+    old_string = new_string;
+    new_string = malloc(strlen(old_string) - strlen(substr) + strlen(replacement) + 1);
+
+    if (new_string == NULL) {
+      free (old_string);
+      return NULL;
+    }
+
+    memcpy(new_string, old_string, token - old_string);
+    memcpy(new_string + (token - old_string), replacement, strlen(replacement));
+    memcpy(new_string + (token - old_string) + strlen(replacement),
+           token + strlen(substr),
+           strlen(old_string) - strlen(substr) - (token - old_string));
+    memset(new_string + strlen (old_string) - strlen(substr) + strlen (replacement), 0, 1);
+
+    head = new_string + (token - old_string) + strlen( replacement );
+    free (old_string);
+  }
   return new_string;
 }
 
 char *
-str_replace(const char *str, const char *old, const char *new)
-{
-  const char buffer[BUFFER_LENGTH];
-  char *p;
-  long d;
-
-  p = strstr(str, old);
-  d = p - str;
-
-  if (!p) return str;
-
-  strncpy(buffer, str, d);
-  buffer[d] = '\0';
-
-  sprintf(buffer + d, "%s%s", new, p + strlen(old));
-
-  return buffer;
+escape(const char *string) {
+  return str_replace_all(string, "'", "''");
 }
+
+/*
+int
+add_cmd(char **options)
+{
+  return 0;
+}
+
+int
+all_cmd(char **options)
+{
+  return 0;
+}
+
+int
+report_cmd(char **options)
+{
+  return 0;
+}
+
+int
+start_cmd(char **options)
+{
+  return 0;
+}
+
+int
+stop_cmd(char **options)
+{
+  return 0;
+}
+*/
