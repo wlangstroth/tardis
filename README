@@ -29,7 +29,6 @@ Dependencies
 ------------
 
 * sqlite3
-* clang (but should work with any C compiler)
 
 
 Licence
