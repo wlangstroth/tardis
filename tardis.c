@@ -32,14 +32,6 @@ char *seconds_to_time_string(int);
 char *str_replace_all(const char *, const char *, const char *);
 char *escape(const char *);
 
-/*
-int add_cmd(char **);
-int all_cmd(char **);
-int report_cmd(char **);
-int start_cmd(char **);
-int stop_cmd(char **);
-*/
-
 int
 main(int argc, char *argv[])
 {
@@ -57,22 +49,6 @@ main(int argc, char *argv[])
   char *project;
   char *description;
 
-/*
-  struct cmd {
-    const char *command;
-    const char *short_form;
-    int (*fn)(char **);
-  };
-
-  static struct cmd commands[] = {
-    { "add",    NULL, add_cmd     },
-    { "all",    NULL, all_cmd     },
-    { "report", "r",  report_cmd  },
-    { "start",  "s",  start_cmd   },
-    { "stop",   NULL, stop_cmd    }
-  };
-*/
-
   const char *insert_template =
     "insert into entries(project, description) values('%s','%s')";
   const char *update_template =
@@ -83,7 +59,7 @@ main(int argc, char *argv[])
   if (argc < 2) {
     fprintf(stderr, "Usage: %s mode [options]\n", argv[0]);
     fprintf(stderr, "(More usage information)\n");
-    exit(EXIT_FAILURE);
+    goto bail;
   }
 
   char *mode = argv[1];
@@ -94,8 +70,7 @@ main(int argc, char *argv[])
   result_code = sqlite3_open(home_db, &db);
   if (result_code) {
     fprintf(stderr, "%s\n", sqlite3_errmsg(db));
-    sqlite3_close(db);
-    exit(EXIT_FAILURE);
+    goto bail;
   }
 
 // -----------------------------------------------------------------------------
@@ -114,6 +89,7 @@ main(int argc, char *argv[])
   if (result_code) {
     fprintf(stderr, "SQL error: %s\n", error_message);
     sqlite3_free(error_message);
+    goto bail;
   }
 
   // the estimate integer is in seconds
@@ -130,6 +106,7 @@ main(int argc, char *argv[])
   if (result_code) {
     fprintf(stderr, "SQL error: %s\n", error_message);
     sqlite3_free(error_message);
+    goto bail;
   }
 
 // -----------------------------------------------------------------------------
@@ -143,7 +120,7 @@ main(int argc, char *argv[])
 
     if (argc < 4) {
       fprintf(stderr, "Usage: %s t[ask] <project_name> <description> <estimate>\n", argv[0]);
-      exit(EXIT_FAILURE);
+      goto bail;
     }
 
   } else if (!strcmp(mode, "start") || !strcmp(mode, "s")) {
@@ -153,7 +130,7 @@ main(int argc, char *argv[])
 
     if (argc < 3) {
       fprintf(stderr, "Usage: %s s[tart] <project_name> [<description>]\n", argv[0]);
-      exit(EXIT_FAILURE);
+      goto bail;
     }
 
     project = argv[2];
@@ -168,6 +145,7 @@ main(int argc, char *argv[])
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
       sqlite3_free(error_message);
+      goto bail;
     }
 
     sprintf(insert_sql, insert_template, project, escape(description));
@@ -175,6 +153,7 @@ main(int argc, char *argv[])
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
       sqlite3_free(error_message);
+      goto bail;
     }
 
   } else if (!strcmp(mode, "report") || !strcmp(mode, "r")) {
@@ -215,6 +194,7 @@ main(int argc, char *argv[])
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
       sqlite3_free(error_message);
+      goto bail;
     }
 
     printf("└───────────────────────┴──────────────┘\n");
@@ -239,6 +219,7 @@ main(int argc, char *argv[])
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
       sqlite3_free(error_message);
+      goto bail;
     }
 
     printf("└─────────────────────────────┴──────────────────────┴────────────────────────────────────────────────────┘\n");
@@ -250,7 +231,7 @@ main(int argc, char *argv[])
 
     if (argc < 5 || argc > 6) {
       fprintf(stderr, "Usage: %s add <project_name> <start> <end> [<description>]\n", argv[0]);
-      exit(EXIT_FAILURE);
+      goto bail;
     }
 
     project = argv[2];
@@ -267,6 +248,7 @@ main(int argc, char *argv[])
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
       sqlite3_free(error_message);
+      goto bail;
     }
 
   } else if (!strcmp(mode, "stop")) {
@@ -276,7 +258,7 @@ main(int argc, char *argv[])
 
     if (argc != 2) {
       fprintf(stderr, "Usage: %s stop\n", argv[0]);
-      exit(EXIT_FAILURE);
+      goto bail;
     }
 
     time(&rawtime);
@@ -288,16 +270,21 @@ main(int argc, char *argv[])
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
       sqlite3_free(error_message);
+      goto bail;
     }
 
   } else {
     fprintf(stderr, "Unrecognized mode\n");
     fprintf(stderr, "Available modes: s[tart], r[eport], all, add, stop, t[ask]\n");
-    exit(EXIT_FAILURE);
+    goto bail;
   }
 
   sqlite3_close(db);
   return EXIT_SUCCESS;
+
+bail:
+  sqlite3_close(db);
+  exit(EXIT_FAILURE);
 }
 
 // -----------------------------------------------------------------------------
@@ -396,35 +383,3 @@ char *
 escape(const char *string) {
   return str_replace_all(string, "'", "''");
 }
-
-/*
-int
-add_cmd(char **options)
-{
-  return 0;
-}
-
-int
-all_cmd(char **options)
-{
-  return 0;
-}
-
-int
-report_cmd(char **options)
-{
-  return 0;
-}
-
-int
-start_cmd(char **options)
-{
-  return 0;
-}
-
-int
-stop_cmd(char **options)
-{
-  return 0;
-}
-*/
