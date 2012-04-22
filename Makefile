@@ -1,3 +1,4 @@
+#CC=cc
 CC=clang
 OPTIONS=-Wall -lsqlite3
 
