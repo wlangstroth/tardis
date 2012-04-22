@@ -177,7 +177,7 @@ main(int argc, char *argv[])
       sqlite3_free(error_message);
     }
 
-  } else if (!strcmp(mode, "report")) {
+  } else if (!strcmp(mode, "report") || !strcmp(mode, "r")) {
 // -----------------------------------------------------------------------------
 // Report Mode
 // -----------------------------------------------------------------------------
@@ -249,7 +249,7 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 
     if (argc < 5 || argc > 6) {
-      fprintf(stderr, "Usage: %s add project_name start end [description]\n", argv[0]);
+      fprintf(stderr, "Usage: %s add <project_name> <start> <end> [<description>]\n", argv[0]);
       exit(EXIT_FAILURE);
     }
 
@@ -292,7 +292,7 @@ main(int argc, char *argv[])
 
   } else {
     fprintf(stderr, "Unrecognized mode\n");
-    fprintf(stderr, "Available modes: s[tart], stop, report, add\n");
+    fprintf(stderr, "Available modes: s[tart], r[eport], all, add, stop, t[ask]\n");
     exit(EXIT_FAILURE);
   }
 
