@@ -48,6 +48,7 @@ main(int argc, char *argv[])
   static char  *time_format = "%Y-%m-%d %H:%M:%S";
   char *project;
   char *description;
+  int result = EXIT_FAILURE; // guilty until proven innocent
 
   const char *insert_template =
     "insert into entries(project, description) values('%s','%s')";
@@ -161,8 +162,7 @@ main(int argc, char *argv[])
 // Report Mode
 // -----------------------------------------------------------------------------
 
-
-    static char *report_template =
+    const char *report_template =
       "select project,                                    \
        sum(strftime('%%s',end) - strftime('%%s', start))  \
        from entries                                       \
@@ -279,12 +279,12 @@ main(int argc, char *argv[])
     goto bail;
   }
 
-  sqlite3_close(db);
-  return EXIT_SUCCESS;
+  result = EXIT_SUCCESS;
 
 bail:
+
   sqlite3_close(db);
-  exit(EXIT_FAILURE);
+  return result;
 }
 
 // -----------------------------------------------------------------------------
@@ -374,7 +374,7 @@ str_replace_all(const char *string, const char *substr, const char *replacement)
     memset(new_string + old_length - sub_length + rep_length, 0, 1);
 
     head = new_string + delta + rep_length;
-    free (old_string);
+    free(old_string);
   }
   return new_string;
 }
