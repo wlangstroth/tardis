@@ -55,7 +55,7 @@ main(int argc, char *argv[])
   const char *update_template =
     "update entries \
       set end='%s'  \
-      where start = (select max(start) from entries)";
+      where start = (select max(start) from entries where end is null)";
 
   if (argc < 2) {
     fprintf(stderr, "Usage: %s mode [options]\n", argv[0]);
