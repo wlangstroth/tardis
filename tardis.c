@@ -119,7 +119,9 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 
     if (argc < 4) {
-      fprintf(stderr, "Usage: %s t[ask] <project_name> <description> <estimate>\n", argv[0]);
+      fprintf(stderr,
+          "Usage: %s t[ask] <project_name> <description> <estimate>\n",
+          argv[0]);
       goto bail;
     }
 
@@ -129,7 +131,9 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 
     if (argc < 3) {
-      fprintf(stderr, "Usage: %s s[tart] <project_name> [<description>]\n", argv[0]);
+      fprintf(stderr,
+          "Usage: %s s[tart] <project_name> [<description>]\n",
+          argv[0]);
       goto bail;
     }
 
