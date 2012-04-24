@@ -185,7 +185,10 @@ main(int argc, char *argv[])
     }
 
     if (argc == 4) {
-      sprintf(where_clause, "where date(start, 'localtime') between '%s' and '%s'", argv[2], argv[3]);
+      sprintf(where_clause,
+          "where date(start, 'localtime') between '%s' and '%s'",
+          argv[2],
+          argv[3]);
       sprintf(report_sql, report_template, where_clause);
     }
 
@@ -233,7 +236,9 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 
     if (argc < 5 || argc > 6) {
-      fprintf(stderr, "Usage: %s add <project_name> <start> <end> [<description>]\n", argv[0]);
+      fprintf(stderr,
+          "Usage: %s add <project_name> <start> <end> [<description>]\n",
+          argv[0]);
       goto bail;
     }
 
@@ -277,8 +282,8 @@ main(int argc, char *argv[])
     }
 
   } else {
-    fprintf(stderr, "Unrecognized mode\n");
-    fprintf(stderr, "Available modes: s[tart], r[eport], all, add, stop, t[ask]\n");
+    fprintf(stderr,
+        "Available modes: s[tart], r[eport], all, add, stop, t[ask]\n");
     goto bail;
   }
 
@@ -303,9 +308,12 @@ report_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
 
 static int
 all_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
-  char *end_time = argv[2] ? argv[2] : "     ";
-
-  printf("│ %s - %s to %s │ %-20s │ %-50s │\n", argv[0], argv[1], end_time, argv[3], argv[4]);
+  printf("│ %s - %s to %s │ %-20s │ %-50s │\n",
+      argv[0],
+      argv[1],
+      argv[2] ? argv[2] : "     ",
+      argv[3],
+      argv[4]);
   return 0;
 }
 
