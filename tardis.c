@@ -94,7 +94,6 @@ main(int argc, char *argv[])
   }
 
   // the estimate integer is in seconds
-  // TODO: write conversion function
   const char *create_tasks_sql =
     "create table if not exists tasks(        \
      id integer primary key autoincrement,    \
@@ -335,7 +334,9 @@ seconds_to_time_string(int seconds) {
 
 int
 time_string_to_seconds(char *time_string) {
-  return 1;
+  int h, m, s;
+  sscanf("%dh %dm %ds", h, m, s);
+  return h * 3600 + m * 60 + s;
 }
 
 char *
