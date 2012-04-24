@@ -346,8 +346,11 @@ seconds_to_time_string(int seconds) {
 
 int
 time_string_to_seconds(char *time_string) {
-  int h, m, s;
-  sscanf("%dh %dm %ds", h, m, s);
+  int h = 0;
+  int m = 0;
+  int s = 0;
+
+  sscanf(time_string, "%dh %dm %ds", h, m, s);
   return h * 3600 + m * 60 + s;
 }
 
