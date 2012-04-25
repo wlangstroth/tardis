@@ -30,7 +30,6 @@ static int sink(void *, int, char **, char **);
 int time_string_to_seconds(char *);
 char *seconds_to_time_string(int);
 char *str_replace_all(const char *, const char *, const char *);
-char *str_replace_all2(const char *, const char *, const char *);
 char *escape(const char *);
 
 int
@@ -374,7 +373,7 @@ str_replace_all(const char *string, const char *substr, const char *replacement)
 
   while ((token = strstr(head, substr))) {
     old_string = new_string;
-    new_string = malloc(strlen(old_string) - strlen(substr) + rep_length + 1);
+    new_string = malloc(strlen(old_string) - sub_length + rep_length + 1);
 
     if (new_string == NULL) {
       free(old_string);
@@ -399,22 +398,6 @@ str_replace_all(const char *string, const char *substr, const char *replacement)
 }
 
 char *
-str_replace_all2(const char *string, const char *search, const char *replacement) {
-  size_t len = strlen(string);
-  size_t s_len = strlen(search);
-  size_t r_len = strlen(replacement);
-
-  char *current = string;
-
-  while ((current = strstr(current, search))) {
-    memmove(current + r_len, current + s_len, len - (current - string) - s_len + 1);
-    memcpy(current, replacement, r_len);
-    current++;
-  }
-  return current;
-}
-
-char *
 escape(const char *string) {
-  return str_replace_all2(string, "'", "''");
+  return str_replace_all(string, "'", "''");
 }
