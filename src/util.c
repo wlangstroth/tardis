@@ -1,7 +1,8 @@
 #include "tardis.h"
 
 char *
-seconds_to_time_string(int seconds) {
+seconds_to_time_string(int seconds)
+{
   int h, m, s;
   static char buff[TIME_LENGTH];
 
@@ -20,7 +21,8 @@ seconds_to_time_string(int seconds) {
 }
 
 int
-time_string_to_seconds(char *time_string) {
+time_string_to_seconds(char *time_string)
+{
   int h = 0;
   int m = 0;
   int s = 0;
@@ -30,7 +32,8 @@ time_string_to_seconds(char *time_string) {
 }
 
 char *
-str_replace_all(const char *string, const char *substr, const char *replacement) {
+str_replace_all(const char *string, const char *substr, const char *replacement)
+{
   char *token = NULL;
   char *new_string = NULL;
   char *old_string = NULL;
@@ -73,6 +76,7 @@ str_replace_all(const char *string, const char *substr, const char *replacement)
 }
 
 char *
-escape(const char *string) {
+escape(const char *string)
+{
   return str_replace_all(string, "'", "''");
 }
