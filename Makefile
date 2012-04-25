@@ -8,7 +8,7 @@ all: tardis
 tardis: $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $(OBJ) -lsqlite3
 
-%.o : %.c
+%.o : src/%.c
 	$(CC) $(CFLAGS) -c $<
 
 install:
