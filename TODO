@@ -1,7 +1,5 @@
 * Batch export to Harvest (harvestapp.com)
     sqlite3 ~/.tardis.db ".dump entries" | grep '^INSERT'
-* man page
 * Move modes to their own files
-* Handle modes with a struct
 * Estimates on project tasks, with corresponding links
 * Truncate and ellipsify project/description text in report
