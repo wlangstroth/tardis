@@ -27,7 +27,7 @@ time_string_to_seconds(char *time_string)
   int m = 0;
   int s = 0;
 
-  sscanf(time_string, "%dh %dm %ds", h, m, s);
+  sscanf(time_string, "%2dh %2dm %2ds", h, m, s);
   return h * 3600 + m * 60 + s;
 }
 
