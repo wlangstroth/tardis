@@ -24,6 +24,16 @@ You can also shorten "start" to "s", like so:
 
     $ tardis s another-project "this is a different project"
 
+Other subcommands:
+
+    $ tardis all
+
+shows you all of your entries in an attractive format.
+
+    $ tardis r[eport]
+
+shows you the amount of time you've spent on different projects.
+
 
 Dependencies
 ------------
