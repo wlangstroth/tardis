@@ -16,26 +16,28 @@
 
 #include "tardis.h"
 
+// SQLite Callbacks
 static int report_row(void *, int, char **, char **);
 static int all_row(void *, int, char **, char **);
 static int sink(void *, int, char **, char **);
+
 
 int
 main(int argc, char *argv[])
 {
   sqlite3      *db;
-  char         *error_message = 0;
   int           result_code;
+  time_t        rawtime;
+  char         *error_message = 0;
   char          update_sql[BUFFER_LENGTH];
   char          insert_sql[BUFFER_LENGTH];
   char          add_sql[BUFFER_LENGTH];
   char          date_buffer[DATE_LENGTH];
   char          home_db[BUFFER_LENGTH];
-  time_t        rawtime;
+  char         *project;
+  char         *description;
   struct tm    *timeinfo;
   static char  *time_format = "%Y-%m-%d %H:%M:%S";
-  char *project;
-  char *description;
   int result = EXIT_FAILURE; // guilty until proven innocent
 
   const char *insert_template =
