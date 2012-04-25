@@ -1,11 +1,15 @@
 #CC=cc
-CC=clang
-OPTIONS=-Wall -lsqlite3
+CC = clang
+CFLAGS = -Wall
+OBJ = main.o util.o
 
-all: clean tardis
+all: tardis
 
-tardis:
-	$(CC) $(OPTIONS) tardis.c -o $@
+tardis: $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $(OBJ) -lsqlite3
+
+%.o : %.c
+	$(CC) $(CFLAGS) -c $<
 
 install:
 	install tardis /usr/bin
