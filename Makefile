@@ -15,4 +15,4 @@ install:
 	install tardis /usr/bin
 
 clean:
-	rm -f tardis
+	rm -f tardis *.o
