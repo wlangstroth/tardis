@@ -30,6 +30,7 @@ static int sink(void *, int, char **, char **);
 int time_string_to_seconds(char *);
 char *seconds_to_time_string(int);
 char *str_replace_all(const char *, const char *, const char *);
+char *str_replace_all2(const char *, const char *, const char *);
 char *escape(const char *);
 
 int
@@ -385,7 +386,9 @@ str_replace_all(const char *string, const char *substr, const char *replacement)
 
     memcpy(new_string, old_string, delta);
     memcpy(new_string + delta, replacement, rep_length);
-    memcpy(new_string + delta + rep_length, token + sub_length, old_length - sub_length - delta);
+    memcpy(new_string + delta + rep_length,
+        token + sub_length,
+        old_length - sub_length - delta);
 
     memset(new_string + old_length - sub_length + rep_length, 0, 1);
 
@@ -396,6 +399,22 @@ str_replace_all(const char *string, const char *substr, const char *replacement)
 }
 
 char *
+str_replace_all2(const char *string, const char *search, const char *replacement) {
+  size_t len = strlen(string);
+  size_t s_len = strlen(search);
+  size_t r_len = strlen(replacement);
+
+  char *current = string;
+
+  while ((current = strstr(current, search))) {
+    memmove(current + r_len, current + s_len, len - (current - string) - s_len + 1);
+    memcpy(current, replacement, r_len);
+    current++;
+  }
+  return current;
+}
+
+char *
 escape(const char *string) {
-  return str_replace_all(string, "'", "''");
+  return str_replace_all2(string, "'", "''");
 }
