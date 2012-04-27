@@ -20,17 +20,6 @@ seconds_to_time_string(int seconds)
   return buff;
 }
 
-int
-time_string_to_seconds(char *time_string)
-{
-  int h = 0;
-  int m = 0;
-  int s = 0;
-
-  sscanf(time_string, "%2dh %2dm %2ds", h, m, s);
-  return h * 3600 + m * 60 + s;
-}
-
 char *
 str_replace_all(const char *string, const char *substr, const char *replacement)
 {

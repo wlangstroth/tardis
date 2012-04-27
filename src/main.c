@@ -17,27 +17,32 @@
 #include "tardis.h"
 
 // SQLite Callbacks
-static int report_row(void *, int, char **, char **);
-static int all_row(void *, int, char **, char **);
-static int sink(void *, int, char **, char **);
+int report_row(void *, int, char **, char **);
+int all_row(void *, int, char **, char **);
+int raw_row(void *, int, char **, char **);
+int sink(void *, int, char **, char **);
 
 
 int
 main(int argc, char *argv[])
 {
-  sqlite3      *db;
   int           result_code;
   time_t        rawtime;
-  char         *error_message = 0;
+
   char          update_sql[BUFFER_LENGTH];
   char          insert_sql[BUFFER_LENGTH];
   char          add_sql[BUFFER_LENGTH];
   char          date_buffer[DATE_LENGTH];
   char          home_db[BUFFER_LENGTH];
+
+  char         *error_message = 0;
   char         *project;
   char         *description;
   struct tm    *timeinfo;
-  static char  *time_format = "%Y-%m-%d %H:%M:%S";
+
+  sqlite3      *db;
+
+  const char   *time_format = "%Y-%m-%d %H:%M:%S";
   int result = EXIT_FAILURE; // guilty until proven innocent
 
   const char *insert_template =
@@ -108,10 +113,28 @@ main(int argc, char *argv[])
 // Task Command
 // -----------------------------------------------------------------------------
 
-    if (argc < 4) {
+    if (argc != 5) {
       fprintf(stderr,
-          "Usage: %s t[ask] <project_name> <description> <estimate>\n",
+          "Usage: %s t[ask] <project-name> <description> <estimate>\n",
           argv[0]);
+      goto bail;
+    }
+
+    project = argv[2];
+    description = argv[3];
+    char *estimate = argv[4];
+    char task_sql[BUFFER_LENGTH];
+
+    const char *task_template =
+      "insert into tasks(project, description, estimate) \
+       values('%s', '%s', '%s')";
+
+    sprintf(task_sql, task_template, project, description, estimate);
+
+    result_code = sqlite3_exec(db, task_sql, sink, 0, &error_message);
+    if (result_code) {
+      fprintf(stderr, "SQL error: %s\n", error_message);
+      sqlite3_free(error_message);
       goto bail;
     }
 
@@ -120,9 +143,9 @@ main(int argc, char *argv[])
 // Start Command
 // -----------------------------------------------------------------------------
 
-    if (argc < 3) {
+    if (argc < 3 || argc > 4) {
       fprintf(stderr,
-          "Usage: %s s[tart] <project_name> [<description>]\n",
+          "Usage: %s s[tart] <project-name> [<description>]\n",
           argv[0]);
       goto bail;
     }
@@ -204,13 +227,14 @@ main(int argc, char *argv[])
     printf("│ time                        │ project              │ description                                        │\n");
     printf("├─────────────────────────────┼──────────────────────┼────────────────────────────────────────────────────┤\n");
 
-    static char *all_sql =
-      "select date(start, 'localtime'),        \
-        strftime('%H:%M', start, 'localtime'), \
-        strftime('%H:%M', end, 'localtime'),   \
-        project, description      \
-       from entries               \
+    const char *all_sql =
+      "select date(start, 'localtime'),         \
+        strftime('%H:%M', start, 'localtime'),  \
+        strftime('%H:%M', end, 'localtime'),    \
+        project, description                    \
+       from entries                             \
        order by start";
+
     result_code = sqlite3_exec(db, all_sql, all_row, 0, &error_message);
     if (result_code) {
       fprintf(stderr, "SQL error: %s\n", error_message);
@@ -224,6 +248,21 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 // Last Command
 // -----------------------------------------------------------------------------
+
+    const char *last_sql =
+      "select                                           \
+        start,                                          \
+        project,                                        \
+        description                                     \
+       from entries                                     \
+       where start = (select max(start) from entries)";
+
+    result_code = sqlite3_exec(db, last_sql, raw_row, 0, &error_message);
+    if (result_code) {
+      fprintf(stderr, "SQL error: %s\n", error_message);
+      sqlite3_free(error_message);
+      goto bail;
+    }
 
   } else if (!strcmp(mode, "add")) {
 // -----------------------------------------------------------------------------
@@ -241,7 +280,7 @@ main(int argc, char *argv[])
     char *start = argv[3];
     char *end = argv[4];
     description = argv[5];
-    static char *add_template =
+    const char *add_template =
       "insert into entries(project, start, end, description) \
       values('%s',datetime('%s', 'utc'),datetime('%s', 'utc'),'%s')";
 
@@ -278,7 +317,7 @@ main(int argc, char *argv[])
 
   } else {
     fprintf(stderr,
-        "Available modes: s[tart], r[eport], all, add, stop, t[ask]\n");
+        "Available commands: all, add, last, r[eport], s[tart], stop, t[ask]\n");
     goto bail;
   }
 
@@ -293,7 +332,7 @@ bail:
 // -----------------------------------------------------------------------------
 // Callback Functions
 // -----------------------------------------------------------------------------
-static int
+int
 report_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   long time_spent = argv[1] ? atoi(argv[1]) : 0;
 
@@ -301,7 +340,19 @@ report_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   return 0;
 }
 
-static int
+int
+raw_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
+  int i;
+
+  for (i = 0; i < argc; i++) {
+    printf("| %s ", argv[i]);
+  }
+  printf("|\n");
+
+  return 0;
+}
+
+int
 all_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   printf("│ %s - %s to %s │ %-20s │ %-50s │\n",
       argv[0],
@@ -312,7 +363,7 @@ all_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   return 0;
 }
 
-static int
+int
 sink(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   return 0;
 }
