@@ -315,6 +315,13 @@ main(int argc, char *argv[])
       goto bail;
     }
 
+  } else if (!strcmp(mode, "backup")) {
+// -----------------------------------------------------------------------------
+// Backup Command
+// -----------------------------------------------------------------------------
+
+    // export sql to some backup folder
+
   } else {
     fprintf(stderr,
         "Available commands: all, add, last, r[eport], s[tart], stop, t[ask]\n");
