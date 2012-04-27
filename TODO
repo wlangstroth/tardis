@@ -2,3 +2,6 @@
     sqlite3 ~/.tardis.db ".dump entries" | grep '^INSERT'
 * Estimates on project tasks, with corresponding links
 * Truncate and ellipsify project/description text in report
+* New commands:
+  * backup
+  * report since

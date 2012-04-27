@@ -251,6 +251,7 @@ main(int argc, char *argv[])
 
     const char *last_sql =
       "select                                           \
+        id,                                             \
         start,                                          \
         project,                                        \
         description                                     \
