@@ -88,7 +88,7 @@ main(int argc, char *argv[])
     goto bail;
   }
 
-  // the estimate integer is in seconds
+  // the estimate integer is in hours
   const char *create_tasks_sql =
     "create table if not exists tasks(        \
      id integer primary key autoincrement,    \
