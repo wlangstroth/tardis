@@ -23,16 +23,16 @@ seconds_to_time_string(int seconds)
 char *
 str_replace_all(const char *string, const char *substr, const char *replacement)
 {
-  char *token = NULL;
-  char *new_string = NULL;
-  char *old_string = NULL;
-  char *head = NULL;
+  char *token;
+  char *new_string;
+  char *old_string;
+  char *head;
   size_t delta;
   size_t rep_length = strlen(replacement);
   size_t sub_length = strlen(substr);
   size_t old_length;
 
-  if (substr == NULL || replacement == NULL)
+  if (!substr || !replacement)
     return strdup(string);
 
   new_string = strdup(string);
@@ -42,7 +42,7 @@ str_replace_all(const char *string, const char *substr, const char *replacement)
     old_string = new_string;
     new_string = malloc(strlen(old_string) - sub_length + rep_length + 1);
 
-    if (new_string == NULL) {
+    if (!new_string) {
       free(old_string);
       return NULL;
     }
