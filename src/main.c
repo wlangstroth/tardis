@@ -252,7 +252,7 @@ main(int argc, char *argv[])
     const char *last_sql =
       "select                                           \
         id,                                             \
-        start,                                          \
+        strftime('%H:%M', start, 'localtime'),          \
         project,                                        \
         description                                     \
        from entries                                     \
