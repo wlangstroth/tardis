@@ -95,6 +95,8 @@ main(int argc, char *argv[])
      stamp datetime default current_datetime, \
      project text,                            \
      description text,                        \
+     due datetime,                            \
+     priority int,                            \
      estimate integer)";
 
   result_code = sqlite3_exec(db, create_tasks_sql, sink, 0, &error_message);
@@ -113,30 +115,33 @@ main(int argc, char *argv[])
 // Task Command
 // -----------------------------------------------------------------------------
 
-    if (argc != 5) {
+    if (argc == 5) {
+      project = argv[2];
+      description = argv[3];
+      char *estimate = argv[4];
+      char task_sql[BUFFER_LENGTH];
+
+      const char *task_template =
+        "insert into tasks(project, description, estimate) \
+         values('%s', '%s', '%s')";
+
+      sprintf(task_sql, task_template, project, description, estimate);
+
+      result_code = sqlite3_exec(db, task_sql, sink, 0, &error_message);
+      if (result_code) {
+        fprintf(stderr, "SQL error: %s\n", error_message);
+        sqlite3_free(error_message);
+        goto bail;
+      }
+    } else if (argc == 2) {
+      printf("Task list here.");
+    } else {
       fprintf(stderr,
-          "Usage: %s t[ask] <project-name> <description> <estimate>\n",
+          "Usage: %s t[ask] [add] [<project-name> <description> <estimate>]\n",
           argv[0]);
       goto bail;
     }
 
-    project = argv[2];
-    description = argv[3];
-    char *estimate = argv[4];
-    char task_sql[BUFFER_LENGTH];
-
-    const char *task_template =
-      "insert into tasks(project, description, estimate) \
-       values('%s', '%s', '%s')";
-
-    sprintf(task_sql, task_template, project, description, estimate);
-
-    result_code = sqlite3_exec(db, task_sql, sink, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "SQL error: %s\n", error_message);
-      sqlite3_free(error_message);
-      goto bail;
-    }
 
   } else if (!strcmp(mode, "start") || !strcmp(mode, "s")) {
 // -----------------------------------------------------------------------------
