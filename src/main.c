@@ -280,7 +280,7 @@ main(int argc, char *argv[])
     project = argv[2];
     char *start = argv[3];
     char *end = argv[4];
-    description = argv[5];
+    description = argv[5] ? argv[5] : "";
     const char *add_template =
       "insert into entries(project, start, end, description) \
       values('%s',datetime('%s', 'utc'),datetime('%s', 'utc'),'%s')";
@@ -341,7 +341,8 @@ bail:
 // Callback Functions
 // -----------------------------------------------------------------------------
 int
-report_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
+report_row(void *not_used, int argc, char *argv[], char *az_col_name[])
+{
   long time_spent = argv[1] ? atoi(argv[1]) : 0;
 
   printf("│ %-21s │ %12s │\n", argv[0], seconds_to_time_string(time_spent));
@@ -349,7 +350,8 @@ report_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
 }
 
 int
-raw_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
+raw_row(void *not_used, int argc, char *argv[], char *az_col_name[])
+{
   int i;
 
   for (i = 0; i < argc; i++) {
@@ -361,7 +363,8 @@ raw_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
 }
 
 int
-all_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
+all_row(void *not_used, int argc, char *argv[], char *az_col_name[])
+{
   printf("│ %s │ %s to %s │ %-20s │ %-50s │\n",
       argv[0],
       argv[1],
@@ -372,6 +375,7 @@ all_row(void *not_used, int argc, char *argv[], char *az_col_name[]) {
 }
 
 int
-sink(void *not_used, int argc, char *argv[], char *az_col_name[]) {
+sink(void *not_used, int argc, char *argv[], char *az_col_name[])
+{
   return 0;
 }
