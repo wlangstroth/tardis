@@ -48,9 +48,9 @@ main(int argc, char *argv[])
   const char *insert_template =
     "insert into entries(project, description) values('%s','%s')";
   const char *update_template =
-    "update entries \
-      set end='%s'  \
-      where start = (select max(start) from entries where end is null)";
+    "update entries"
+    "set end='%s'"
+    "where start = (select max(start) from entries where end is null)";
 
   if (argc < 2) {
     fprintf(stderr, "Usage: %s mode [options]\n", argv[0]);
@@ -74,12 +74,12 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 
   const char *create_entries_sql =
-    "create table if not exists entries(        \
-     id integer primary key autoincrement,      \
-     start datetime default current_timestamp,  \
-     project text,                              \
-     description text,                          \
-     end datetime)";
+    "create table if not exists entries("
+    "id integer primary key autoincrement,"
+    "start datetime default current_timestamp,"
+    "project text,"
+    "description text,"
+    "end datetime)";
 
   result_code = sqlite3_exec(db, create_entries_sql, sink, 0, &error_message);
   if (result_code) {
@@ -90,12 +90,12 @@ main(int argc, char *argv[])
 
   // the estimate integer is in hours
   const char *create_tasks_sql =
-    "create table if not exists tasks(        \
-     id integer primary key autoincrement,    \
-     stamp datetime default current_datetime, \
-     project text,                            \
-     description text,                        \
-     estimate integer)";
+    "create table if not exists tasks("
+    "id integer primary key autoincrement,"
+    "stamp datetime default current_datetime,"
+    "project text,"
+    "description text,"
+    "estimate integer)";
 
   result_code = sqlite3_exec(db, create_tasks_sql, sink, 0, &error_message);
   if (result_code) {
@@ -126,8 +126,8 @@ main(int argc, char *argv[])
     char task_sql[BUFFER_LENGTH];
 
     const char *task_template =
-      "insert into tasks(project, description, estimate) \
-       values('%s', '%s', '%s')";
+      "insert into tasks(project, description, estimate)"
+      "values('%s', '%s', '%s')";
 
     sprintf(task_sql, task_template, project, description, estimate);
 
@@ -179,11 +179,11 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 
     const char *report_template =
-      "select project,                                    \
-       sum(strftime('%%s',end) - strftime('%%s', start))  \
-       from entries                                       \
-       %s                                                 \
-       group by project";
+      "select project,"
+      "sum(strftime('%%s',end) - strftime('%%s', start))"
+      "from entries"
+      "%s"
+      "group by project";
 
     static char report_sql[BUFFER_LENGTH];
     static char where_clause[BUFFER_LENGTH];
@@ -228,12 +228,12 @@ main(int argc, char *argv[])
     printf("├────────────┬────────────────┼──────────────────────┼────────────────────────────────────────────────────┤\n");
 
     const char *all_sql =
-      "select date(start, 'localtime'),         \
-        strftime('%H:%M', start, 'localtime'),  \
-        strftime('%H:%M', end, 'localtime'),    \
-        project, description                    \
-       from entries                             \
-       order by start";
+      "select date(start, 'localtime'),"
+       "strftime('%H:%M', start, 'localtime'),"
+       "strftime('%H:%M', end, 'localtime'),"
+       "project, description"
+      "from entries"
+      "order by start";
 
     result_code = sqlite3_exec(db, all_sql, all_row, 0, &error_message);
     if (result_code) {
@@ -250,13 +250,13 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 
     const char *last_sql =
-      "select                                           \
-        id,                                             \
-        strftime('%H:%M', start, 'localtime'),          \
-        project,                                        \
-        description                                     \
-       from entries                                     \
-       where start = (select max(start) from entries)";
+      "select"
+        "id,"
+        "strftime('%H:%M', start, 'localtime'),"
+        "project,"
+        "description"
+       "from entries"
+       "where start = (select max(start) from entries)";
 
     result_code = sqlite3_exec(db, last_sql, raw_row, 0, &error_message);
     if (result_code) {
@@ -282,8 +282,8 @@ main(int argc, char *argv[])
     char *end = argv[4];
     description = argv[5] ? argv[5] : "";
     const char *add_template =
-      "insert into entries(project, start, end, description) \
-      values('%s',datetime('%s', 'utc'),datetime('%s', 'utc'),'%s')";
+      "insert into entries(project, start, end, description)"
+      "values('%s',datetime('%s', 'utc'),datetime('%s', 'utc'),'%s')";
 
     sprintf(add_sql, add_template, project, start, end, escape(description));
 
