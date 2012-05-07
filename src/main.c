@@ -35,6 +35,7 @@ main(int argc, char *argv[])
   char          add_sql[BUFFER_LENGTH];
   char          date_buffer[DATE_LENGTH];
   char          home_db[BUFFER_LENGTH];
+  char          backup_command[BUFFER_LENGTH];
 
   char         *error_message = 0;
   char         *project;
@@ -164,7 +165,28 @@ main(int argc, char *argv[])
 
 
   } else if (!strcmp(mode, "backup") || !strcmp(mode, "b")) {
-    printf("Back it up");
+// -----------------------------------------------------------------------------
+// Backup Command
+// -----------------------------------------------------------------------------
+
+    const char *date_format = "%Y-%m-%d";
+
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    strftime(date_buffer, DATE_LENGTH, date_format, timeinfo);
+
+    sprintf(backup_command,
+        "cp %s/.tardis.db %s/src/backup-tardis/%s.db",
+        getenv("HOME"),
+        getenv("HOME"),
+        date_buffer);
+
+    if (system(backup_command)) {
+      fprintf(stderr, "Error backing up\n");
+      goto bail;
+    }
+
+    printf("Backed up\n");
   } else if (!strcmp(mode, "start") || !strcmp(mode, "s")) {
 // -----------------------------------------------------------------------------
 // Start Command
