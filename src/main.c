@@ -118,7 +118,6 @@ main(int argc, char *argv[])
 // Task Command
 // -----------------------------------------------------------------------------
 
-<<<<<<< HEAD
     if (argc == 5) {
       project = argv[2];
       description = argv[3];
@@ -138,10 +137,6 @@ main(int argc, char *argv[])
         goto bail;
       }
     } else if (argc == 2) {
-      printf("Task list here.");
-    } else {
-=======
-    if (argc == 2) {
       printf("Task list here\n");
       const char *task_list_sql =
         "select id,       \
@@ -160,8 +155,7 @@ main(int argc, char *argv[])
         sqlite3_free(error_message);
         goto bail;
       }
-    } else if (argc != 5) {
->>>>>>> d9e145597697819bd68788dbf2a6771887e2be8c
+    } else {
       fprintf(stderr,
           "Usage: %s t[ask] [add] [<project-name> <description> <estimate>]\n",
           argv[0]);
