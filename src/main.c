@@ -163,6 +163,8 @@ main(int argc, char *argv[])
     }
 
 
+  } else if (!strcmp(mode, "backup") || !strcmp(mode, "b")) {
+    printf("Back it up");
   } else if (!strcmp(mode, "start") || !strcmp(mode, "s")) {
 // -----------------------------------------------------------------------------
 // Start Command
