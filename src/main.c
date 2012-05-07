@@ -285,7 +285,7 @@ main(int argc, char *argv[])
     project = argv[2];
     char *start = argv[3];
     char *end = argv[4];
-    description = argv[5];
+    description = argv[5] ? argv[5] : "";
     const char *add_template =
       "insert into entries(project, start, end, description) \
       values('%s',datetime('%s', 'utc'),datetime('%s', 'utc'),'%s')";
