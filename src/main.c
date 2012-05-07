@@ -62,12 +62,12 @@ main(int argc, char *argv[])
 
   char *mode = argv[1];
 
-  sprintf(home_db, "%s/.tardis.db", getenv("HOME"));
+  sprintf(home_db, "%s/.tardis/current.db", getenv("HOME"));
 
   // This will create a new ~/.tardis.db file if one does not exist.
   result_code = sqlite3_open(home_db, &db);
   if (result_code) {
-    fprintf(stderr, "%s\n", sqlite3_errmsg(db));
+    fprintf(stderr, "Error opening database -> %s\n", sqlite3_errmsg(db));
     goto bail;
   }
 
@@ -176,7 +176,7 @@ main(int argc, char *argv[])
     strftime(date_buffer, DATE_LENGTH, date_format, timeinfo);
 
     sprintf(backup_command,
-        "cp %s/.tardis.db %s/src/backup-tardis/%s.db",
+        "cp %s/.tardis/current.db %s/.tardis/%s.db",
         getenv("HOME"),
         getenv("HOME"),
         date_buffer);
