@@ -164,6 +164,12 @@ main(int argc, char *argv[])
     }
 
 
+  } else if (!strcmp(mode, "break")) {
+// -----------------------------------------------------------------------------
+// Break Command
+// -----------------------------------------------------------------------------
+    printf("Stubbed break command\n");
+
   } else if (!strcmp(mode, "backup") || !strcmp(mode, "b")) {
 // -----------------------------------------------------------------------------
 // Backup Command
@@ -186,7 +192,6 @@ main(int argc, char *argv[])
       goto bail;
     }
 
-    printf("Backed up\n");
   } else if (!strcmp(mode, "start") || !strcmp(mode, "s")) {
 // -----------------------------------------------------------------------------
 // Start Command
