@@ -1,3 +1,5 @@
+* Interactive mode
+
 * Batch export to Harvest (harvestapp.com)
 * equivalent to sqlite3 ~/.tardis.db ".dump entries" | grep '^INSERT'
 * Estimates on project tasks, with corresponding links
@@ -5,3 +7,4 @@
 * New commands:
   * backup
   * report since
+* update commend

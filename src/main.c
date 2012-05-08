@@ -17,10 +17,11 @@
 #include "tardis.h"
 
 // SQLite Callbacks
-int report_row(void *, int, char **, char **);
-int all_row(void *, int, char **, char **);
-int raw_row(void *, int, char **, char **);
-int sink(void *, int, char **, char **);
+int report_row    (void *, int, char **, char **);
+int all_row       (void *, int, char **, char **);
+int task_list_row (void *, int, char **, char **);
+int raw_row       (void *, int, char **, char **);
+int sink          (void *, int, char **, char **);
 
 
 int
@@ -34,6 +35,7 @@ main(int argc, char *argv[])
   char          add_sql[BUFFER_LENGTH];
   char          date_buffer[DATE_LENGTH];
   char          home_db[BUFFER_LENGTH];
+  char          backup_command[BUFFER_LENGTH];
 
   char         *error_message = 0;
   char         *project;
@@ -60,12 +62,12 @@ main(int argc, char *argv[])
 
   char *mode = argv[1];
 
-  sprintf(home_db, "%s/.tardis.db", getenv("HOME"));
+  sprintf(home_db, "%s/.tardis/current.db", getenv("HOME"));
 
   // This will create a new ~/.tardis.db file if one does not exist.
   result_code = sqlite3_open(home_db, &db);
   if (result_code) {
-    fprintf(stderr, "%s\n", sqlite3_errmsg(db));
+    fprintf(stderr, "Error opening database -> %s\n", sqlite3_errmsg(db));
     goto bail;
   }
 
@@ -83,7 +85,7 @@ main(int argc, char *argv[])
 
   result_code = sqlite3_exec(db, create_entries_sql, sink, 0, &error_message);
   if (result_code) {
-    fprintf(stderr, "SQL error: %s\n", error_message);
+    fprintf(stderr, "Error creating entries table -> %s\n", error_message);
     sqlite3_free(error_message);
     goto bail;
   }
@@ -92,14 +94,18 @@ main(int argc, char *argv[])
   const char *create_tasks_sql =
     "create table if not exists tasks(        \
      id integer primary key autoincrement,    \
+     parent integer default 1,                \
      stamp datetime default current_datetime, \
      project text,                            \
      description text,                        \
-     estimate integer)";
+     due datetime,                            \
+     priority int,                            \
+     estimate integer,                        \
+     foreign key(parent) references tasks(id))";
 
   result_code = sqlite3_exec(db, create_tasks_sql, sink, 0, &error_message);
   if (result_code) {
-    fprintf(stderr, "SQL error: %s\n", error_message);
+    fprintf(stderr, "Error creating tasks table -> %s\n", error_message);
     sqlite3_free(error_message);
     goto bail;
   }
@@ -113,31 +119,74 @@ main(int argc, char *argv[])
 // Task Command
 // -----------------------------------------------------------------------------
 
-    if (argc != 5) {
+    if (argc == 5) {
+      project = argv[2];
+      description = argv[3];
+      char *estimate = argv[4];
+      char task_sql[BUFFER_LENGTH];
+
+      const char *task_template =
+        "insert into tasks(project, description, estimate) \
+         values('%s', '%s', '%s')";
+
+      sprintf(task_sql, task_template, project, description, estimate);
+
+      result_code = sqlite3_exec(db, task_sql, sink, 0, &error_message);
+      if (result_code) {
+        fprintf(stderr, "SQL error: %s\n", error_message);
+        sqlite3_free(error_message);
+        goto bail;
+      }
+    } else if (argc == 2) {
+      printf("Task list here\n");
+      const char *task_list_sql =
+        "select id,       \
+         parent,          \
+         stamp,           \
+         project,         \
+         description,     \
+         estimate         \
+         from tasks       \
+         where id != 0    \
+         order by id";
+
+      result_code = sqlite3_exec(db, task_list_sql, task_list_row, 0, &error_message);
+      if (result_code) {
+        fprintf(stderr, "Error listing tasks -> %s\n", error_message);
+        sqlite3_free(error_message);
+        goto bail;
+      }
+    } else {
       fprintf(stderr,
-          "Usage: %s t[ask] <project-name> <description> <estimate>\n",
+          "Usage: %s t[ask] [add] [<project-name> <description> <estimate>]\n",
           argv[0]);
       goto bail;
     }
 
-    project = argv[2];
-    description = argv[3];
-    char *estimate = argv[4];
-    char task_sql[BUFFER_LENGTH];
 
-    const char *task_template =
-      "insert into tasks(project, description, estimate) \
-       values('%s', '%s', '%s')";
+  } else if (!strcmp(mode, "backup") || !strcmp(mode, "b")) {
+// -----------------------------------------------------------------------------
+// Backup Command
+// -----------------------------------------------------------------------------
 
-    sprintf(task_sql, task_template, project, description, estimate);
+    const char *date_format = "%Y-%m-%d";
 
-    result_code = sqlite3_exec(db, task_sql, sink, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "SQL error: %s\n", error_message);
-      sqlite3_free(error_message);
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    strftime(date_buffer, DATE_LENGTH, date_format, timeinfo);
+
+    sprintf(backup_command,
+        "cp %s/.tardis/current.db %s/.tardis/%s.db",
+        getenv("HOME"),
+        getenv("HOME"),
+        date_buffer);
+
+    if (system(backup_command)) {
+      fprintf(stderr, "Error backing up\n");
       goto bail;
     }
 
+    printf("Backed up\n");
   } else if (!strcmp(mode, "start") || !strcmp(mode, "s")) {
 // -----------------------------------------------------------------------------
 // Start Command
@@ -160,7 +209,7 @@ main(int argc, char *argv[])
     sprintf(update_sql, update_template, date_buffer);
     result_code = sqlite3_exec(db, update_sql, sink, 0, &error_message);
     if (result_code) {
-      fprintf(stderr, "SQL error: %s\n", error_message);
+      fprintf(stderr, "Error stopping previous entry -> %s\n", error_message);
       sqlite3_free(error_message);
       goto bail;
     }
@@ -168,7 +217,7 @@ main(int argc, char *argv[])
     sprintf(insert_sql, insert_template, project, escape(description));
     result_code = sqlite3_exec(db, insert_sql, sink, 0, &error_message);
     if (result_code) {
-      fprintf(stderr, "SQL error: %s\n", error_message);
+      fprintf(stderr, "Error starting entry -> %s\n", error_message);
       sqlite3_free(error_message);
       goto bail;
     }
@@ -211,7 +260,7 @@ main(int argc, char *argv[])
 
     result_code = sqlite3_exec(db, report_sql, report_row, 0, &error_message);
     if (result_code) {
-      fprintf(stderr, "SQL error: %s\n", error_message);
+      fprintf(stderr, "Error with report -> %s\n", error_message);
       sqlite3_free(error_message);
       goto bail;
     }
@@ -237,7 +286,7 @@ main(int argc, char *argv[])
 
     result_code = sqlite3_exec(db, all_sql, all_row, 0, &error_message);
     if (result_code) {
-      fprintf(stderr, "SQL error: %s\n", error_message);
+      fprintf(stderr, "Error listing entries -> %s\n", error_message);
       sqlite3_free(error_message);
       goto bail;
     }
@@ -260,7 +309,7 @@ main(int argc, char *argv[])
 
     result_code = sqlite3_exec(db, last_sql, raw_row, 0, &error_message);
     if (result_code) {
-      fprintf(stderr, "SQL error: %s\n", error_message);
+      fprintf(stderr, "Error getting last command -> %s\n", error_message);
       sqlite3_free(error_message);
       goto bail;
     }
@@ -289,7 +338,7 @@ main(int argc, char *argv[])
 
     result_code = sqlite3_exec(db, add_sql, sink, 0, &error_message);
     if (result_code) {
-      fprintf(stderr, "SQL error: %s\n", error_message);
+      fprintf(stderr, "Error adding entry -> %s\n", error_message);
       sqlite3_free(error_message);
       goto bail;
     }
@@ -311,7 +360,7 @@ main(int argc, char *argv[])
     sprintf(update_sql, update_template, date_buffer);
     result_code = sqlite3_exec(db, update_sql, sink, 0, &error_message);
     if (result_code) {
-      fprintf(stderr, "SQL error: %s\n", error_message);
+      fprintf(stderr, "Error stopping -> %s\n", error_message);
       sqlite3_free(error_message);
       goto bail;
     }
@@ -375,7 +424,21 @@ all_row(void *not_used, int argc, char *argv[], char *az_col_name[])
 }
 
 int
-sink(void *not_used, int argc, char *argv[], char *az_col_name[])
+task_list_row(void *not_used, int argc, char *argv[], char *az_col_name[])
 {
+  printf("│ %s │ %s │ %s │ %s │ %s │ %s │ %s │ %s │\n",
+      argv[0],
+      argv[1],
+      argv[2],
+      argv[3],
+      argv[4],
+      argv[5],
+      argv[6],
+      argv[7]);
+  return 0;
+}
+
+int
+sink(void *not_used, int argc, char *argv[], char *az_col_name[]) {
   return 0;
 }
