@@ -1,12 +1,13 @@
 #CC=cc
-CC = clang
-CFLAGS = -Wall
-OBJ = main.o util.o
+CC=clang
+CFLAGS=-Wall
+LDFLAGS=-lsqlite3
+OBJ=main.o util.o
 
 all: tardis
 
 tardis: $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $(OBJ) -lsqlite3
+	$(CC) $(CFLAGS) -o $@ $(OBJ) $(LDFLAGS)
 
 %.o : src/%.c
 	$(CC) $(CFLAGS) -c $<
