@@ -12,7 +12,7 @@ tardis: $(OBJ)
 	$(CC) $(CFLAGS) -c $<
 
 install:
-	install tardis /usr/bin
+	install tardis /usr/local/bin
 
 clean:
 	rm -f tardis *.o
