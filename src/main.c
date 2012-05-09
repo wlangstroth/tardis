@@ -164,6 +164,33 @@ main(int argc, char *argv[])
     }
 
 
+  } else if (!strcmp(mode, "break")) {
+// -----------------------------------------------------------------------------
+// Break Command
+// -----------------------------------------------------------------------------
+    project = "break";
+    description = "";
+
+    time(&rawtime);
+    timeinfo = gmtime(&rawtime);
+    strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
+
+    sprintf(update_sql, update_template, date_buffer);
+    result_code = sqlite3_exec(db, update_sql, sink, 0, &error_message);
+    if (result_code) {
+      fprintf(stderr, "Error stopping previous entry -> %s\n", error_message);
+      sqlite3_free(error_message);
+      goto bail;
+    }
+
+    sprintf(insert_sql, insert_template, project, escape(description));
+    result_code = sqlite3_exec(db, insert_sql, sink, 0, &error_message);
+    if (result_code) {
+      fprintf(stderr, "Error starting entry -> %s\n", error_message);
+      sqlite3_free(error_message);
+      goto bail;
+    }
+
   } else if (!strcmp(mode, "backup") || !strcmp(mode, "b")) {
 // -----------------------------------------------------------------------------
 // Backup Command
@@ -186,7 +213,6 @@ main(int argc, char *argv[])
       goto bail;
     }
 
-    printf("Backed up\n");
   } else if (!strcmp(mode, "start") || !strcmp(mode, "s")) {
 // -----------------------------------------------------------------------------
 // Start Command
