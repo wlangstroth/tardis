@@ -45,14 +45,14 @@ main(int argc, char *argv[])
 
   sqlite3      *db;
 
+  int           result = EXIT_FAILURE; // guilty until proven innocent
   const char   *time_format = "%Y-%m-%d %H:%M:%S";
-  int result = EXIT_FAILURE; // guilty until proven innocent
 
   const char *insert_template =
     "insert into entries(project, description) values('%s','%s')";
   const char *update_template =
     "update entries \
-     set end='%s' \
+     set end='%s'   \
      where start = (select max(start) from entries where end is null)";
 
   if (argc < 2) {
