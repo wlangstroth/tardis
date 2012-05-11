@@ -418,13 +418,6 @@ main(int argc, char *argv[])
       goto bail;
     }
 
-  } else if (!strcmp(command, "backup")) {
-// -----------------------------------------------------------------------------
-// Backup Command
-// -----------------------------------------------------------------------------
-
-    // export sql to some backup folder
-
   } else {
     fprintf(stderr,
         "Available commands: all, add, b[ackup], end, last, r[eport], s[tart], stop, t[ask]\n");
@@ -492,6 +485,7 @@ task_list_row(void *not_used, int argc, char *argv[], char *az_col_name[])
 }
 
 int
-sink(void *not_used, int argc, char *argv[], char *az_col_name[]) {
+sink(void *not_used, int argc, char *argv[], char *az_col_name[])
+{
   return 0;
 }
