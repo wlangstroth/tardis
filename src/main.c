@@ -77,11 +77,11 @@ main(int argc, char *argv[])
 
   const char *create_entries_sql =
     "create table if not exists entries( \
-    "id integer primary key autoincrement, \
-    "start datetime default current_timestamp, \
-    "project text, \
-    "description text, \
-    "end datetime)";
+     id integer primary key autoincrement, \
+     start datetime default current_timestamp, \
+     project text, \
+     description text, \
+     end datetime)";
 
   result_code = sqlite3_exec(db, create_entries_sql, sink, 0, &error_message);
   if (result_code) {
@@ -201,6 +201,18 @@ main(int argc, char *argv[])
     time(&rawtime);
     timeinfo = localtime(&rawtime);
     strftime(date_buffer, DATE_LENGTH, date_format, timeinfo);
+
+    sprintf(backup_command,
+        "cp %s/.tardis/current.db %s/.tardis/%s.db",
+        getenv("HOME"),
+        getenv("HOME"),
+        date_buffer);
+
+    if (system(backup_command)) {
+      fprintf(stderr, "Error backing up\n");
+      goto bail;
+    }
+
   } else if (!strcmp(command, "end")) {
 // -----------------------------------------------------------------------------
 // End Command
@@ -360,7 +372,7 @@ main(int argc, char *argv[])
     description = argv[5] ? argv[5] : "";
     const char *add_template =
       "insert into entries(project, start, end, description) \
-      "values('%s',datetime('%s', 'utc'),datetime('%s', 'utc'),'%s')";
+       values('%s',datetime('%s', 'utc'),datetime('%s', 'utc'),'%s')";
 
     sprintf(add_sql, add_template, project, start, end, escape(description));
 
