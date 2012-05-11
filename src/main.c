@@ -427,7 +427,7 @@ main(int argc, char *argv[])
 
   } else {
     fprintf(stderr,
-        "Available commands: all, add, b[ackup], last, r[eport], s[tart], stop, t[ask]\n");
+        "Available commands: all, add, b[ackup], end, last, r[eport], s[tart], stop, t[ask]\n");
     goto bail;
   }
 
