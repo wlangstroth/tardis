@@ -77,11 +77,11 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 
   const char *create_entries_sql =
-    "create table if not exists entries( \
-     id integer primary key autoincrement, \
-     start datetime default current_timestamp, \
-     project text, \
-     description text, \
+    "create table if not exists entries(        \
+     id integer primary key autoincrement,      \
+     start datetime default current_timestamp,  \
+     project text,                              \
+     description text,                          \
      end datetime)";
 
   result_code = sqlite3_exec(db, create_entries_sql, sink, 0, &error_message);
@@ -281,10 +281,10 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 
     const char *report_template =
-      "select project, \
-       sum(strftime('%%s',end) - strftime('%%s', start)) \
-       from entries \
-       %s \
+      "select project,                                    \
+       sum(strftime('%%s',end) - strftime('%%s', start))  \
+       from entries                                       \
+       %s                                                 \
        group by project";
 
     static char report_sql[BUFFER_LENGTH];
@@ -330,11 +330,11 @@ main(int argc, char *argv[])
     printf("├────────────┬────────────────┼──────────────────────┼────────────────────────────────────────────────────┤\n");
 
     const char *all_sql =
-      "select date(start, 'localtime'), \
+      "select date(start, 'localtime'),       \
        strftime('%H:%M', start, 'localtime'), \
-       strftime('%H:%M', end, 'localtime'), \
-       project, description \
-      from entries \
+       strftime('%H:%M', end, 'localtime'),   \
+       project, description                   \
+      from entries                            \
       order by start";
 
     result_code = sqlite3_exec(db, all_sql, all_row, 0, &error_message);
