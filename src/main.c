@@ -55,12 +55,12 @@ main(int argc, char *argv[])
     "where start = (select max(start) from entries where end is null)";
 
   if (argc < 2) {
-    fprintf(stderr, "Usage: %s mode [options]\n", argv[0]);
+    fprintf(stderr, "Usage: %s command [options]\n", argv[0]);
     fprintf(stderr, "(More usage information)\n");
     goto bail;
   }
 
-  char *mode = argv[1];
+  char *command = argv[1];
 
   sprintf(home_db, "%s/.tardis/current.db", getenv("HOME"));
 
@@ -114,7 +114,7 @@ main(int argc, char *argv[])
 // Commands
 // -----------------------------------------------------------------------------
 
-  if (!strcmp(mode, "task") || !strcmp(mode, "t")) {
+  if (!strcmp(command, "task") || !strcmp(command, "t")) {
 // -----------------------------------------------------------------------------
 // Task Command
 // -----------------------------------------------------------------------------
@@ -164,7 +164,7 @@ main(int argc, char *argv[])
     }
 
 
-  } else if (!strcmp(mode, "break")) {
+  } else if (!strcmp(command, "break")) {
 // -----------------------------------------------------------------------------
 // Break Command
 // -----------------------------------------------------------------------------
@@ -191,7 +191,7 @@ main(int argc, char *argv[])
       goto bail;
     }
 
-  } else if (!strcmp(mode, "backup") || !strcmp(mode, "b")) {
+  } else if (!strcmp(command, "backup") || !strcmp(command, "b")) {
 // -----------------------------------------------------------------------------
 // Backup Command
 // -----------------------------------------------------------------------------
@@ -213,7 +213,7 @@ main(int argc, char *argv[])
       goto bail;
     }
 
-  } else if (!strcmp(mode, "start") || !strcmp(mode, "s")) {
+  } else if (!strcmp(command, "start") || !strcmp(command, "s")) {
 // -----------------------------------------------------------------------------
 // Start Command
 // -----------------------------------------------------------------------------
@@ -248,7 +248,7 @@ main(int argc, char *argv[])
       goto bail;
     }
 
-  } else if (!strcmp(mode, "report") || !strcmp(mode, "r")) {
+  } else if (!strcmp(command, "report") || !strcmp(command, "r")) {
 // -----------------------------------------------------------------------------
 // Report Command
 // -----------------------------------------------------------------------------
@@ -293,7 +293,7 @@ main(int argc, char *argv[])
 
     printf("└───────────────────────┴──────────────┘\n");
 
-  } else if (!strcmp(mode, "all")) {
+  } else if (!strcmp(command, "all")) {
 // -----------------------------------------------------------------------------
 // All Command
 // -----------------------------------------------------------------------------
@@ -319,7 +319,7 @@ main(int argc, char *argv[])
 
     printf("└────────────┴────────────────┴──────────────────────┴────────────────────────────────────────────────────┘\n");
 
-  } else if (!strcmp(mode, "last")) {
+  } else if (!strcmp(command, "last")) {
 // -----------------------------------------------------------------------------
 // Last Command
 // -----------------------------------------------------------------------------
@@ -340,7 +340,7 @@ main(int argc, char *argv[])
       goto bail;
     }
 
-  } else if (!strcmp(mode, "add")) {
+  } else if (!strcmp(command, "add")) {
 // -----------------------------------------------------------------------------
 // Add Command
 // -----------------------------------------------------------------------------
@@ -369,7 +369,7 @@ main(int argc, char *argv[])
       goto bail;
     }
 
-  } else if (!strcmp(mode, "stop")) {
+  } else if (!strcmp(command, "stop")) {
 // -----------------------------------------------------------------------------
 // Stop Command
 // -----------------------------------------------------------------------------
@@ -391,7 +391,7 @@ main(int argc, char *argv[])
       goto bail;
     }
 
-  } else if (!strcmp(mode, "backup")) {
+  } else if (!strcmp(command, "backup")) {
 // -----------------------------------------------------------------------------
 // Backup Command
 // -----------------------------------------------------------------------------
