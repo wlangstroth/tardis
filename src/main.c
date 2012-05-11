@@ -33,6 +33,7 @@ main(int argc, char *argv[])
   char          update_sql[BUFFER_LENGTH];
   char          insert_sql[BUFFER_LENGTH];
   char          add_sql[BUFFER_LENGTH];
+  char          end_sql[BUFFER_LENGTH];
   char          date_buffer[DATE_LENGTH];
   char          home_db[BUFFER_LENGTH];
   char          backup_command[BUFFER_LENGTH];
@@ -225,7 +226,19 @@ main(int argc, char *argv[])
       goto bail;
     }
 
-    printf("End command here");
+    char *row_id = argv[2];
+    char *end_time = argv[3];
+
+    const char *end_template =
+      "update entries set end=datetime('%s', 'utc') where id=%s";
+
+    sprintf(end_sql, end_template, end_time, row_id);
+    result_code = sqlite3_exec(db, end_sql, sink, 0, &error_message);
+    if (result_code) {
+      fprintf(stderr, "Error ending entry -> %s\n", error_message);
+      sqlite3_free(error_message);
+      goto bail;
+    }
 
   } else if (!strcmp(command, "start") || !strcmp(command, "s")) {
 // -----------------------------------------------------------------------------
