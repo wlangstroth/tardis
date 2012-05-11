@@ -50,9 +50,9 @@ main(int argc, char *argv[])
   const char *insert_template =
     "insert into entries(project, description) values('%s','%s')";
   const char *update_template =
-    "update entries"
-    "set end='%s'"
-    "where start = (select max(start) from entries where end is null)";
+    "update entries \
+     set end='%s' \
+     where start = (select max(start) from entries where end is null)";
 
   if (argc < 2) {
     fprintf(stderr, "Usage: %s command [options]\n", argv[0]);
@@ -76,11 +76,11 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 
   const char *create_entries_sql =
-    "create table if not exists entries("
-    "id integer primary key autoincrement,"
-    "start datetime default current_timestamp,"
-    "project text,"
-    "description text,"
+    "create table if not exists entries( \
+    "id integer primary key autoincrement, \
+    "start datetime default current_timestamp, \
+    "project text, \
+    "description text, \
     "end datetime)";
 
   result_code = sqlite3_exec(db, create_entries_sql, sink, 0, &error_message);
@@ -201,17 +201,19 @@ main(int argc, char *argv[])
     time(&rawtime);
     timeinfo = localtime(&rawtime);
     strftime(date_buffer, DATE_LENGTH, date_format, timeinfo);
+  } else if (!strcmp(command, "end")) {
+// -----------------------------------------------------------------------------
+// End Command
+// -----------------------------------------------------------------------------
 
-    sprintf(backup_command,
-        "cp %s/.tardis/current.db %s/.tardis/%s.db",
-        getenv("HOME"),
-        getenv("HOME"),
-        date_buffer);
-
-    if (system(backup_command)) {
-      fprintf(stderr, "Error backing up\n");
+    if (argc != 4) {
+      fprintf(stderr,
+          "Usage: %s end <id> <end-time>\n",
+          argv[0]);
       goto bail;
     }
+
+    printf("End command here");
 
   } else if (!strcmp(command, "start") || !strcmp(command, "s")) {
 // -----------------------------------------------------------------------------
@@ -254,11 +256,11 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 
     const char *report_template =
-      "select project,"
-      "sum(strftime('%%s',end) - strftime('%%s', start))"
-      "from entries"
-      "%s"
-      "group by project";
+      "select project, \
+       sum(strftime('%%s',end) - strftime('%%s', start)) \
+       from entries \
+       %s \
+       group by project";
 
     static char report_sql[BUFFER_LENGTH];
     static char where_clause[BUFFER_LENGTH];
@@ -303,12 +305,12 @@ main(int argc, char *argv[])
     printf("├────────────┬────────────────┼──────────────────────┼────────────────────────────────────────────────────┤\n");
 
     const char *all_sql =
-      "select date(start, 'localtime'),"
-       "strftime('%H:%M', start, 'localtime'),"
-       "strftime('%H:%M', end, 'localtime'),"
-       "project, description"
-      "from entries"
-      "order by start";
+      "select date(start, 'localtime'), \
+       strftime('%H:%M', start, 'localtime'), \
+       strftime('%H:%M', end, 'localtime'), \
+       project, description \
+      from entries \
+      order by start";
 
     result_code = sqlite3_exec(db, all_sql, all_row, 0, &error_message);
     if (result_code) {
@@ -325,13 +327,13 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 
     const char *last_sql =
-      "select"
-        "id,"
-        "strftime('%H:%M', start, 'localtime'),"
-        "project,"
-        "description"
-       "from entries"
-       "where start = (select max(start) from entries)";
+      "select \
+        id, \
+        strftime('%H:%M', start, 'localtime'), \
+        project, \
+        description \
+       from entries \
+       where start = (select max(start) from entries)";
 
     result_code = sqlite3_exec(db, last_sql, raw_row, 0, &error_message);
     if (result_code) {
@@ -357,7 +359,7 @@ main(int argc, char *argv[])
     char *end = argv[4];
     description = argv[5] ? argv[5] : "";
     const char *add_template =
-      "insert into entries(project, start, end, description)"
+      "insert into entries(project, start, end, description) \
       "values('%s',datetime('%s', 'utc'),datetime('%s', 'utc'),'%s')";
 
     sprintf(add_sql, add_template, project, start, end, escape(description));
