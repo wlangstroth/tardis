@@ -1,14 +1,14 @@
 TARDIS
 ======
 
-Time tracking for Timelords!
+Time tracking for Time Lords!
 
 Or people who spend most of their time on the command line, and always forget
 to open that browser window, sign in, bugger about with the mouse until
 some drop-down gives you the correct time, click on the project, find the
 activity, select the ... oh, screw it! I'm writing my own!
 
-Note: this really is for Timelords. There isn't any serious error handling, and
+Note: this really is for Time Lords. There isn't any serious error handling, and
 if you screw up, your best bet is to fix things with sql commands.
 
 
@@ -37,11 +37,20 @@ shows you all of your entries in an attractive format.
 
 shows you the amount of time you've spent on different projects.
 
+    $ tardis b[ackup]
+
+backs up your sqlite database file to ~/.tardis/<today's date>.db
+
+    $ tardis end 3 "2012-05-11 09:00:00"
+
+amends the entry with id 3 to end at 9:00 in the morning.
+
 
 Database
 --------
 
-The SQLite database file is located in your home directory as .tardis.db
+The SQLite database file is located under your home directory, in the ~/.tardis
+directory, as `current.db`.
 
 
 Dependencies

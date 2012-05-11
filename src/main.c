@@ -2,7 +2,7 @@
 //
 // TARDIS
 //
-// Time tracking for Timelords!
+// Time tracking for Time Lords!
 //
 // Or people who spend most of their time on the command line, and always forget
 // to open that browser window, sign in, bugger about with the mouse until
