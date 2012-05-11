@@ -1,3 +1,10 @@
 #!/bin/bash
 
-
+for i in 1 2 3; do
+  ./bin/tardis test/$i.sh
+  if [ $? -eq 0 ]; then
+    echo -e "\033[0;32m$i passed\033[0m"
+  else
+    echo -e "\033[0;31m$i failed\033[0m"
+  fi
+done
