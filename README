@@ -41,7 +41,8 @@ shows you the amount of time you've spent on different projects.
 Database
 --------
 
-The SQLite database file is located in your home directory as .tardis.db
+The SQLite database file is located in the directory .tardis under your home
+directory as current.db
 
 
 Dependencies
