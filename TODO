@@ -5,3 +5,4 @@
 * Estimates on project tasks, with corresponding links
 * Truncate and ellipsify project/description text in report
 * Email an export
+* Mechanism to automatically update the version number
