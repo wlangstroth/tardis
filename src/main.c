@@ -165,6 +165,14 @@ main(int argc, char *argv[])
     }
 
 
+  } else if (!strcmp(command, "help")) {
+// -----------------------------------------------------------------------------
+// Break Command
+// -----------------------------------------------------------------------------
+    printf("You need it!\n");
+    printf("Usage: %s t[ask] [add] [<project-name> <description> <estimate>]\n", argv[0]);
+    printf("Available commands: all, add, b[ackup], end, help, last, r[eport], s[tart], stop, t[ask]\n");
+
   } else if (!strcmp(command, "break")) {
 // -----------------------------------------------------------------------------
 // Break Command
