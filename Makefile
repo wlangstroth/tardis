@@ -17,3 +17,6 @@ install:
 
 clean:
 	rm -f tardis *.o
+
+test:
+	true
