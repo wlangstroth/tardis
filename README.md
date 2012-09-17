@@ -1,7 +1,8 @@
-TARDIS
-======
+# TARDIS
 
 Time tracking for Time Lords!
+
+[![Build Status](https://secure.travis-ci.org/wlangstroth/tardis.png)](http://travis-ci.org/wlangstroth/tardis)
 
 Or people who spend most of their time on the command line, and always forget
 to open that browser window, sign in, bugger about with the mouse until
@@ -39,7 +40,7 @@ shows you the amount of time you've spent on different projects.
 
     $ tardis b[ackup]
 
-backs up your sqlite database file to ~/.tardis/<today's date>.db
+backs up your sqlite database file to ~/.tardis/todays-date.db
 
     $ tardis end 3 "2012-05-11 09:00:00"
 
