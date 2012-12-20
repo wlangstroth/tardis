@@ -13,7 +13,7 @@ tardis: $(OBJ)
 
 install:
 	install tardis /usr/local/bin
-	cp man/tardis.7 /usr/local/share/man/man1
+	cp man/tardis.7 /usr/local/share/man/man7
 
 clean:
 	rm -f tardis *.o
