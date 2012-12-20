@@ -1,4 +1,5 @@
-# TARDIS
+TARDIS
+======
 
 Time tracking for Time Lords!
 
