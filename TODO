@@ -1,8 +1,9 @@
 * Interactive mode
 
-* Batch export to Harvest (harvestapp.com)
 * equivalent to sqlite3 ~/.tardis.db ".dump entries" | grep '^INSERT'
-* Estimates on project tasks, with corresponding links
 * Truncate and ellipsify project/description text in report
 * Email an export
 * Mechanism to automatically update the version number
+
+* set up "queue" to replace tasks. Should be able to queue a task, and then take
+it off the queue, and in doing so, start the timer on that task
