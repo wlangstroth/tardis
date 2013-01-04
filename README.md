@@ -19,7 +19,7 @@ Usage
 
 To create a new entry,
 
-    $ tardis start project "a description of the project"
+    $ tardis start project "working on the project"
 
 To stop for the day,
 
@@ -27,7 +27,7 @@ To stop for the day,
 
 You can also shorten "start" to "s", like so:
 
-    $ tardis s another-project "this is a different project"
+    $ tardis s another-project "doing something in a different project"
 
 Other subcommands:
 
