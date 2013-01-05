@@ -57,7 +57,8 @@ main(int argc, char *argv[])
 
   if (argc < 2) {
     fprintf(stderr, "Usage: %s command [options]\n", argv[0]);
-    fprintf(stderr, "(More usage information)\n");
+    fprintf(stderr, "Available commands: all, add, b[ackup], end, help, last, r[eport], s[tart], stop, t[ask]\n");
+    fprintf(stderr, "Try 'tardis help'\n");
     goto bail;
   }
 
@@ -170,7 +171,6 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 // TODO: this should display by default, and be more helpful
 
-    printf("You need it!\n");
     printf("Available commands: all, add, b[ackup], end, help, last, r[eport], s[tart], stop, t[ask]\n");
 
   } else if (!strcmp(command, "break")) {
