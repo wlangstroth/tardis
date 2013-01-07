@@ -1,45 +1,54 @@
-.TH "tardis" 1 "December 2012" "0.1.2"
-.SH NAME
-tardis \- Command line time tracking application
-.SH SYNOPSIS
-tardis start <project> [<description>]
+.TH "tardis" 7 "January 2013" "0.1.3"
+.
+.SH "NAME"
+\fBtardis\fR \- Command line time tracking application\.
+.
+.SH "SYNOPSIS"
+\fBtardis\fR command [options]
+\fBtardis\fR r[eport] [<date>]
 .br
-tardis stop
+\fBtardis\fR r[eport] [<start-date>] [<end-date>]
 .br
-tardis add <start> <end> <project> [<description>]
+\fBtardis\fR b[ackup]
 .br
-tardis all
-.br
-tardis r[eport] [<date>]
-.br
-tardis r[eport] [<start-date>] [<end-date>]
-.br
-tardis b[ackup]
-.br
-tardis end <id> <end-date>
-
-.SH DESCRIPTION
-A program for tracking time ... like a Time Lord.
+\fBtardis\fR end <id> <end-date>
+.
+.SH "DESCRIPTION"
+A program for tracking time ... like a Time Lord\.
+.
+.SH "ESSENTIAL COMMANDS"
+For the full command list, see the COMMANDS section\.
+.
+.SH "COMMANDS"
+.
+.TP
+\fBs[tart]\fR \fIproject\fR [\fIdescription\fR]
+Start a new activity on a project\.
+.
+.IP
+The \fIDescription\fR is optional\.
+.
+.TP
+\fBstop\fR
+Stop the last activity\.
+.
+.TP
+\fBtardis\fR add \fIstart\fR \fIend\fR \fIproject\fR [\fIdescription\fR]
+Manually add an entry\.
+.
+.IP
+Allows you to insert an entry into the entries table without having to go into sqlite.
+.
+.SH "HOMEPAGE"
 .PP
-tardis has a set of functions that can be accessed in two different ways:
-
-    * Directly from the command line
-
-And coming soon ...
-
-    * Interactively
-
-.SH HOMEPAGE
-.PP
-The homepage for
-.B tardis
-on the internet is http://github.com/wlangstroth/tardis
-.SH AUTHOR
+The homepage for \fBtardis\fR on the internet is http://github.com/wlangstroth/tardis
+.
+.SH "AUTHOR"
 .PP
 The author is Will Langstroth <will@langstroth.com>
-
+.
 .SH BUGS
 Please report them to the author.
-
+.
 .SH SEE ALSO
 There should be something here.
