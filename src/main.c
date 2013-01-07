@@ -328,6 +328,22 @@ main(int argc, char *argv[])
 
     printf("└───────────────────────┴──────────────┘\n");
 
+// -----------------------------------------------------------------------------
+// List Command
+// -----------------------------------------------------------------------------
+  } else if (!strcmp(command, "list")) {
+    const char *list_sql =
+      "select *     \
+       from entries \
+       order by start";
+
+    result_code = sqlite3_exec(db, list_sql, raw_row, 0, &error_message);
+    if (result_code) {
+      fprintf(stderr, "Error listing entries -> %s\n", error_message);
+      sqlite3_free(error_message);
+      goto bail;
+    }
+
   } else if (!strcmp(command, "all")) {
 // -----------------------------------------------------------------------------
 // All Command
@@ -338,12 +354,12 @@ main(int argc, char *argv[])
     printf("├────────────┬────────────────┼──────────────────────┼──────────────────────────────────────────────────────────────┤\n");
 
     const char *all_sql =
-      "select date(start, 'localtime'),       \
-       strftime('%H:%M', start, 'localtime'), \
-       strftime('%H:%M', end, 'localtime'),   \
-       project, description                   \
-      from entries                            \
-      order by start";
+      "select date(start, 'localtime'),         \
+        strftime('%H:%M', start, 'localtime'),  \
+        strftime('%H:%M', end, 'localtime'),    \
+        project, description                    \
+       from entries                             \
+       order by start";
 
     result_code = sqlite3_exec(db, all_sql, all_row, 0, &error_message);
     if (result_code) {
@@ -360,12 +376,12 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 
     const char *last_sql =
-      "select \
-        id, \
-        strftime('%H:%M', start, 'localtime'), \
-        project, \
-        description \
-       from entries \
+      "select                                   \
+        id,                                     \
+        strftime('%H:%M', start, 'localtime'),  \
+        project,                                \
+        description                             \
+       from entries                             \
        where start = (select max(start) from entries)";
 
     result_code = sqlite3_exec(db, last_sql, raw_row, 0, &error_message);
