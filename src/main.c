@@ -465,6 +465,7 @@ report_row(void *not_used, int argc, char *argv[], char *az_col_name[])
   long time_spent = argv[1] ? atoi(argv[1]) : 0;
 
   printf("│ %-21s │ %12s │\n", argv[0], seconds_to_time_string(time_spent));
+
   return 0;
 }
 
@@ -490,6 +491,7 @@ all_row(void *not_used, int argc, char *argv[], char *az_col_name[])
       argv[2] ? argv[2] : "     ",
       argv[3],
       argv[4]);
+
   return 0;
 }
 
@@ -505,6 +507,7 @@ task_list_row(void *not_used, int argc, char *argv[], char *az_col_name[])
       argv[5],
       argv[6],
       argv[7]);
+
   return 0;
 }
 
