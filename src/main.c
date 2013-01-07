@@ -57,7 +57,7 @@ main(int argc, char *argv[])
 
   if (argc < 2) {
     fprintf(stderr, "Usage: %s command [options]\n", argv[0]);
-    fprintf(stderr, "Available commands: all, add, b[ackup], end, help, last, r[eport], s[tart], stop, t[ask]\n");
+    fprintf(stderr, AVAILABLE);
     fprintf(stderr, "Try 'tardis help'\n");
     goto bail;
   }
@@ -171,7 +171,7 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 // TODO: this should display by default, and be more helpful
 
-    printf("Available commands: all, add, b[ackup], end, help, last, r[eport], s[tart], stop, t[ask]\n");
+    printf(AVAILABLE);
 
   } else if (!strcmp(command, "break")) {
 // -----------------------------------------------------------------------------
@@ -331,7 +331,7 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 // List Command
 // -----------------------------------------------------------------------------
-  } else if (!strcmp(command, "list")) {
+  } else if (!strcmp(command, "list") || !strcmp(command, "ls")) {
     const char *list_sql =
       "select *     \
        from entries \
@@ -443,8 +443,7 @@ main(int argc, char *argv[])
     }
 
   } else {
-    fprintf(stderr,
-        "Available commands: all, add, b[ackup], end, last, r[eport], s[tart], stop, t[ask]\n");
+    fprintf(stderr, AVAILABLE);
     goto bail;
   }
 
