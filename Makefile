@@ -11,12 +11,14 @@ tardis: $(OBJ)
 %.o: src/%.c
 	$(CC) $(CFLAGS) -c $<
 
-install:
+local:
 	install tardis /usr/local/bin
 	cp man/tardis.7 /usr/local/share/man/man7
 
 clean:
 	rm -f tardis *.o
+
+install: tardis local clean
 
 test:
 	true
