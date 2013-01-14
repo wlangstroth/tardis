@@ -21,4 +21,4 @@ clean:
 install: tardis local clean
 
 test:
-	true
+	test/runner
