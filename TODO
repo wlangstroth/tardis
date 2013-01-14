@@ -1,9 +1,8 @@
-* Interactive mode
-
-* equivalent to sqlite3 ~/.tardis.db ".dump entries" | grep '^INSERT'
 * Truncate and ellipsify project/description text in report
 * Email an export
 * Mechanism to automatically update the version number
 
-* set up "queue" to replace tasks. Should be able to queue a task, and then take
-it off the queue, and in doing so, start the timer on that task
+* Set up "queue" to replace tasks. Should be able to queue a task, and then take
+  it off the queue, and in doing so, start the timer on that task.
+* Queue should also show you what your day will look like if you attend to all
+  the stuff you're supposed to be doing.
