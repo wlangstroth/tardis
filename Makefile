@@ -3,7 +3,7 @@ CFLAGS=-Wall -O2 -g
 LDLIBS=-lsqlite3
 OBJ=main.o util.o
 
-all: tardis
+all: tardis test
 
 tardis: $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $(OBJ) $(LDLIBS)
