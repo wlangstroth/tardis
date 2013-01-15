@@ -481,6 +481,7 @@ raw_row(void *not_used, int argc, char *argv[], char *az_col_name[])
   return 0;
 }
 
+// TODO: needs to truncate the description to the length of the field
 int
 all_row(void *not_used, int argc, char *argv[], char *az_col_name[])
 {
