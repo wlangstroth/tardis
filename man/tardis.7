@@ -32,11 +32,18 @@ Manually add an entry\.
 .IP
 Allows you to insert an entry into the entries table without having to go into sqlite.
 .
-\fBtardis\fR r[eport] [<date>]
-.br
-\fBtardis\fR r[eport] [<start-date>] [<end-date>]
-.br
-\fBtardis\fR b[ackup]
+.TP
+\fBr[eport]\fR [\fIdate\fR]
+Report on the day's time\.
+.
+.TP
+\fBr[eport]\fR [\fIstart-date\fR] [\fIend-date\fR]
+Report on the time spent between two dates\.
+.
+.TP
+\fBb[ackup]\fR
+Backup the current database in the ~/.tardis directory, using today's date as the file name.
+.
 .br
 \fBtardis\fR end <id> <end-date>
 .SH "HOMEPAGE"
@@ -49,6 +56,4 @@ The author is Will Langstroth <will@langstroth.com>
 .
 .SH BUGS
 Please report them to the author.
-.
-.SH SEE ALSO
-There should be something here.
+
