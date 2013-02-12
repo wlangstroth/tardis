@@ -169,7 +169,6 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 // Help Command
 // -----------------------------------------------------------------------------
-// TODO: this should display by default, and be more helpful
 
     printf(AVAILABLE);
 
