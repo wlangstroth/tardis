@@ -6,3 +6,5 @@
   it off the queue, and in doing so, start the timer on that task.
 * Queue should also show you what your day will look like if you attend to all
   the stuff you're supposed to be doing.
+* Ability to add ticket number to activity, so that hours can be tracked for
+  Almost Scrum.
