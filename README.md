@@ -48,6 +48,13 @@ backs up your sqlite database file to ~/.tardis/todays-date.db
 amends the entry with id 3 to end at 9:00 in the morning.
 
 
+The Name
+--------
+
+I swear when I started this there were no other projects on github with the name
+"tardis". Now there are tons, but I probably won't change it. The end.
+
+
 Database
 --------
 
