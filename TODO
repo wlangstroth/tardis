@@ -1,5 +1,6 @@
+* Real tests
+* Have "tardis stop" accept date-times
 * Truncate and ellipsify project/description text in report
-* Email an export
 * Mechanism to automatically update the version number
 
 * Set up "queue" to replace tasks. Should be able to queue a task, and then take
@@ -7,4 +8,4 @@
 * Queue should also show you what your day will look like if you attend to all
   the stuff you're supposed to be doing.
 * Ability to add ticket number to activity, so that hours can be tracked for
-  Almost Scrum.
+  AS.
