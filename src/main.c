@@ -122,7 +122,7 @@ main(int argc, char *argv[])
 
 // -- Task Command -------------------------------------------------------------
 
-    if (argc == 5) {
+    if (argc == 6) {
       project = argv[2];
       description = argv[3];
       char *estimate = argv[4];
