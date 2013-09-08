@@ -20,7 +20,7 @@
 
 // SQLite Callbacks
 int report_row    (void *, int, char **, char **);
-int all_row       (void *, int, char **, char **);
+int list_row      (void *, int, char **, char **);
 int task_list_row (void *, int, char **, char **);
 int raw_row       (void *, int, char **, char **);
 int sink          (void *, int, char **, char **);
@@ -330,7 +330,7 @@ main(int argc, char *argv[])
     printf("│ time                        │ project              │ description                                                  │\n");
     printf("├────────────┬────────────────┼──────────────────────┼──────────────────────────────────────────────────────────────┤\n");
 
-    const char *all_sql =
+    const char *list_sql =
       "select date(start, 'localtime'),         \
         strftime('%H:%M', start, 'localtime'),  \
         strftime('%H:%M', end, 'localtime'),    \
@@ -338,7 +338,7 @@ main(int argc, char *argv[])
        from entries                             \
        order by start";
 
-    result_code = sqlite3_exec(db, all_sql, all_row, 0, &error_message);
+    result_code = sqlite3_exec(db, list_sql, list_row, 0, &error_message);
     if (result_code) {
       fprintf(stderr, "Error listing entries -> %s\n", error_message);
       sqlite3_free(error_message);
@@ -466,9 +466,8 @@ raw_row(void *not_used, int argc, char *argv[], char *az_col_name[])
   return 0;
 }
 
-// TODO: needs to truncate the description to the length of the field
 int
-all_row(void *not_used, int argc, char *argv[], char *az_col_name[])
+list_row(void *not_used, int argc, char *argv[], char *az_col_name[])
 {
   char *short_desc = argv[4];
   short_desc[60] = '\0';
