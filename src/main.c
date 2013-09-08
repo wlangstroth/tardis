@@ -403,21 +403,21 @@ main(int argc, char *argv[])
       fprintf(stderr, "Usage: %s stop [<end-time>]\n", argv[0]);
       goto bail;
     }
+    const char *end_template =
+        "update entries               \
+         set end=datetime('%s','utc') \
+         where start = (select max(start) from entries where end is null)";
 
     if (argc == 3) {
       char *end = argv[2];
-      const char *end_template =
-          "update entries \
-           set end='%s'   \
-           where start = (select max(start) from entries where end is null)";
-      strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
+      sprintf(update_sql, end_template, end);
     } else {
       time(&rawtime);
       timeinfo = gmtime(&rawtime);
+      strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
+      sprintf(update_sql, end_template, date_buffer);
     }
-    strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
 
-    sprintf(update_sql, update_template, date_buffer);
     result_code = sqlite3_exec(db, update_sql, sink, 0, &error_message);
     if (result_code) {
       fprintf(stderr, "Error stopping -> %s\n", error_message);
