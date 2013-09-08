@@ -96,15 +96,15 @@ main(int argc, char *argv[])
 
   // the estimate integer is in hours
   const char *create_tasks_sql =
-    "create table if not exists tasks(        \
-     id integer primary key autoincrement,    \
-     parent integer default 1,                \
-     stamp datetime default current_datetime, \
-     project text,                            \
-     description text,                        \
-     due datetime,                            \
-     priority int,                            \
-     estimate integer,                        \
+    "create table if not exists tasks(            \
+     id integer primary key autoincrement,        \
+     parent integer default 1,                    \
+     created datetime default current_timestamp,  \
+     project text,                                \
+     description text,                            \
+     due datetime,                                \
+     priority int,                                \
+     estimate integer,                            \
      foreign key(parent) references tasks(id))";
 
   result_code = sqlite3_exec(db, create_tasks_sql, sink, 0, &error_message);
@@ -141,11 +141,11 @@ main(int argc, char *argv[])
         goto bail;
       }
     } else if (argc == 2) {
-      printf("Task list here\n");
+      printf("Tasks:\n");
       const char *task_list_sql =
         "select id,       \
          parent,          \
-         stamp,           \
+         created,         \
          project,         \
          description,     \
          estimate         \
