@@ -4,7 +4,6 @@
 #ifndef _minunit_h
 #define _minunit_h
 
-#include <stdio.h>
 #include <dbg.h>
 #include <stdlib.h>
 
@@ -28,7 +27,6 @@
     printf("Tests run: %d\n", tests_run);\
         exit(result != 0);\
 }
-
 
 int tests_run;
 
