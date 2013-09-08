@@ -323,26 +323,8 @@ main(int argc, char *argv[])
 
     printf("└───────────────────────┴──────────────┘\n");
 
-// -----------------------------------------------------------------------------
-// List Command
-// -----------------------------------------------------------------------------
   } else if (!strcmp(command, "list") || !strcmp(command, "ls")) {
-    const char *list_sql =
-      "select *     \
-       from entries \
-       order by start";
-
-    result_code = sqlite3_exec(db, list_sql, raw_row, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "Error listing entries -> %s\n", error_message);
-      sqlite3_free(error_message);
-      goto bail;
-    }
-
-  } else if (!strcmp(command, "all")) {
-// -----------------------------------------------------------------------------
-// All Command
-// -----------------------------------------------------------------------------
+// -- List Command -------------------------------------------------------------
 
     printf("┌─────────────────────────────┬──────────────────────┬──────────────────────────────────────────────────────────────┐\n");
     printf("│ time                        │ project              │ description                                                  │\n");
