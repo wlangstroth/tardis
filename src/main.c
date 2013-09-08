@@ -43,9 +43,9 @@ main(int argc, char *argv[])
   char         *error_message = 0;
   char         *project;
   char         *description;
-  struct tm    *timeinfo;
+  struct tm    *timeinfo = NULL;
 
-  sqlite3      *db;
+  sqlite3      *db = NULL;
 
   int           result = EXIT_FAILURE; // guilty until proven innocent
   const char   *time_format = "%Y-%m-%d %H:%M:%S";
