@@ -488,6 +488,8 @@ raw_row(void *not_used, int argc, char *argv[], char *az_col_name[])
 int
 all_row(void *not_used, int argc, char *argv[], char *az_col_name[])
 {
+  char *short_desc = argv[4];
+  short_desc[60] = '\0';
   printf("│ %s │ %s to %s │ %-20s │ %-60s │\n",
       argv[0],
       argv[1],
