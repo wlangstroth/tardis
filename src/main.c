@@ -12,6 +12,8 @@
 // Author:  Will Langstroth
 // License: MIT
 //
+// Note: This was more of an experiment in writing readable C code than
+// anything. For entertainment purposes only.
 // -----------------------------------------------------------------------------
 
 #include "tardis.h"
@@ -117,9 +119,8 @@ main(int argc, char *argv[])
 // -----------------------------------------------------------------------------
 
   if (!strcmp(command, "task") || !strcmp(command, "t")) {
-// -----------------------------------------------------------------------------
-// Task Command
-// -----------------------------------------------------------------------------
+
+// -- Task Command -------------------------------------------------------------
 
     if (argc == 5) {
       project = argv[2];
@@ -166,16 +167,15 @@ main(int argc, char *argv[])
     }
 
   } else if (!strcmp(command, "help")) {
-// -----------------------------------------------------------------------------
-// Help Command
-// -----------------------------------------------------------------------------
+
+// -- Help Command -------------------------------------------------------------
 
     printf(AVAILABLE);
 
   } else if (!strcmp(command, "break")) {
-// -----------------------------------------------------------------------------
-// Break Command
-// -----------------------------------------------------------------------------
+
+// -- Break Command ------------------------------------------------------------
+
     project = "break";
     description = "";
 
@@ -200,9 +200,8 @@ main(int argc, char *argv[])
     }
 
   } else if (!strcmp(command, "backup") || !strcmp(command, "b")) {
-// -----------------------------------------------------------------------------
-// Backup Command
-// -----------------------------------------------------------------------------
+
+// -- Backup Command -----------------------------------------------------------
 
     const char *date_format = "%Y-%m-%d";
 
@@ -222,9 +221,8 @@ main(int argc, char *argv[])
     }
 
   } else if (!strcmp(command, "end")) {
-// -----------------------------------------------------------------------------
-// End Command
-// -----------------------------------------------------------------------------
+
+// -- End Command --------------------------------------------------------------
 
     if (argc != 4) {
       fprintf(stderr,
@@ -248,9 +246,8 @@ main(int argc, char *argv[])
     }
 
   } else if (!strcmp(command, "start") || !strcmp(command, "s")) {
-// -----------------------------------------------------------------------------
-// Start Command
-// -----------------------------------------------------------------------------
+
+// -- Start Command ------------------------------------------------------------
 
     if (argc < 3 || argc > 4) {
       fprintf(stderr,
@@ -283,9 +280,8 @@ main(int argc, char *argv[])
     }
 
   } else if (!strcmp(command, "report") || !strcmp(command, "r")) {
-// -----------------------------------------------------------------------------
-// Report Command
-// -----------------------------------------------------------------------------
+
+// -- Report Command -----------------------------------------------------------
 
     const char *report_template =
       "select project,                                    \
@@ -370,9 +366,8 @@ main(int argc, char *argv[])
     printf("└────────────┴────────────────┴──────────────────────┴──────────────────────────────────────────────────────────────┘\n");
 
   } else if (!strcmp(command, "last")) {
-// -----------------------------------------------------------------------------
-// Last Command
-// -----------------------------------------------------------------------------
+
+// -- Last Command -------------------------------------------------------------
 
     const char *last_sql =
       "select                                   \
@@ -391,9 +386,8 @@ main(int argc, char *argv[])
     }
 
   } else if (!strcmp(command, "add")) {
-// -----------------------------------------------------------------------------
-// Add Command
-// -----------------------------------------------------------------------------
+
+// -- Add Command --------------------------------------------------------------
 
     if (argc < 5 || argc > 6) {
       fprintf(stderr,
@@ -420,17 +414,25 @@ main(int argc, char *argv[])
     }
 
   } else if (!strcmp(command, "stop")) {
-// -----------------------------------------------------------------------------
-// Stop Command
-// -----------------------------------------------------------------------------
 
-    if (argc != 2) {
-      fprintf(stderr, "Usage: %s stop\n", argv[0]);
+// -- Stop Command -------------------------------------------------------------
+
+    if (argc < 2 || argc > 3) {
+      fprintf(stderr, "Usage: %s stop [<end-time>]\n", argv[0]);
       goto bail;
     }
 
-    time(&rawtime);
-    timeinfo = gmtime(&rawtime);
+    if (argc == 3) {
+      char *end = argv[2];
+      const char *end_template =
+          "update entries \
+           set end='%s'   \
+           where start = (select max(start) from entries where end is null)";
+      strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
+    } else {
+      time(&rawtime);
+      timeinfo = gmtime(&rawtime);
+    }
     strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
 
     sprintf(update_sql, update_template, date_buffer);
@@ -440,6 +442,8 @@ main(int argc, char *argv[])
       sqlite3_free(error_message);
       goto bail;
     }
+
+// -- End Commands -------------------------------------------------------------
 
   } else {
     fprintf(stderr, AVAILABLE);
