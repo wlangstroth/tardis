@@ -404,19 +404,15 @@ main(int argc, char *argv[])
       goto bail;
     }
     const char *end_template =
-        "update entries               \
-         set end=datetime('%s','utc') \
+        "update entries          \
+         set end=datetime('%s')  \
          where start = (select max(start) from entries where end is null)";
 
+    char *end = "now";
     if (argc == 3) {
-      char *end = argv[2];
-      sprintf(update_sql, end_template, end);
-    } else {
-      time(&rawtime);
-      timeinfo = gmtime(&rawtime);
-      strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
-      sprintf(update_sql, end_template, date_buffer);
+      end = argv[2];
     }
+    sprintf(update_sql, end_template, end);
 
     result_code = sqlite3_exec(db, update_sql, sink, 0, &error_message);
     if (result_code) {
