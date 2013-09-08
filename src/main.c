@@ -161,7 +161,7 @@ main(int argc, char *argv[])
       }
     } else {
       fprintf(stderr,
-          "Usage: %s t[ask] [add] [<project-name> <description> <estimate>]\n",
+          "Usage: %s t[ask] [add <project-name> <description> <estimate>]\n",
           argv[0]);
       goto bail;
     }
