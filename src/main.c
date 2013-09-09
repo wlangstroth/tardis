@@ -59,7 +59,7 @@ main(int argc, char *argv[])
 
   if (argc < 2) {
     fprintf(stderr, "Usage: %s command [options]\n", argv[0]);
-    fprintf(stderr, AVAILABLE);
+    fprintf(stderr, AVAILABLE_COMMANDS);
     fprintf(stderr, "Try 'tardis help'\n");
     goto bail;
   }
@@ -170,7 +170,7 @@ main(int argc, char *argv[])
 
 // -- Help Command -------------------------------------------------------------
 
-    printf(AVAILABLE);
+    printf(AVAILABLE_COMMANDS);
 
   } else if (!strcmp(command, "break")) {
 
@@ -424,7 +424,7 @@ main(int argc, char *argv[])
 // -- End Commands -------------------------------------------------------------
 
   } else {
-    fprintf(stderr, AVAILABLE);
+    fprintf(stderr, AVAILABLE_COMMANDS);
     goto bail;
   }
 
