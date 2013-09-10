@@ -87,12 +87,13 @@ main(int argc, char *argv[])
      description text,                          \
      end datetime)";
 
-  result_code = sqlite3_exec(db, create_entries_sql, sink, 0, &error_message);
-  if (result_code) {
-    fprintf(stderr, "Error creating entries table -> %s\n", error_message);
-    sqlite3_free(error_message);
-    goto bail;
-  }
+  // result_code = sqlite3_exec(db, create_entries_sql, sink, 0, &error_message);
+  // if (result_code) {
+  //   fprintf(stderr, "Error creating entries table -> %s\n", error_message);
+  //   sqlite3_free(error_message);
+  //   goto bail;
+  // }
+  DB_EXEC(create_entries_sql, sink, "Error creating entries table -> %s\n");
 
   // the estimate integer is in hours
   const char *create_tasks_sql =
@@ -107,12 +108,13 @@ main(int argc, char *argv[])
      estimate integer,                            \
      foreign key(parent) references tasks(id))";
 
-  result_code = sqlite3_exec(db, create_tasks_sql, sink, 0, &error_message);
-  if (result_code) {
-    fprintf(stderr, "Error creating tasks table -> %s\n", error_message);
-    sqlite3_free(error_message);
-    goto bail;
-  }
+  // result_code = sqlite3_exec(db, create_tasks_sql, sink, 0, &error_message);
+  // if (result_code) {
+  //   fprintf(stderr, "Error creating tasks table -> %s\n", error_message);
+  //   sqlite3_free(error_message);
+  //   goto bail;
+  // }
+  DB_EXEC(create_tasks_sql, sink, "Error creating tasks table -> %s\n");
 
 // -----------------------------------------------------------------------------
 // Commands
@@ -134,12 +136,8 @@ main(int argc, char *argv[])
 
       sprintf(task_sql, task_template, project, description, estimate);
 
-      result_code = sqlite3_exec(db, task_sql, sink, 0, &error_message);
-      if (result_code) {
-        fprintf(stderr, "SQL error: %s\n", error_message);
-        sqlite3_free(error_message);
-        goto bail;
-      }
+      DB_EXEC(task_sql, sink, "SQL error: -> %s\n");
+
     } else if (argc == 2) {
       printf("Tasks:\n");
       const char *task_list_sql =
@@ -153,12 +151,7 @@ main(int argc, char *argv[])
          where id != 0    \
          order by id";
 
-      result_code = sqlite3_exec(db, task_list_sql, task_list_row, 0, &error_message);
-      if (result_code) {
-        fprintf(stderr, "Error listing tasks -> %s\n", error_message);
-        sqlite3_free(error_message);
-        goto bail;
-      }
+      DB_EXEC(task_list_sql, task_list_row, "Error listing tasks -> %s\n");
     } else {
       fprintf(stderr,
           "Usage: %s t[ask] [add <project-name> <description> <estimate>]\n",
@@ -184,20 +177,10 @@ main(int argc, char *argv[])
     strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
 
     sprintf(update_sql, update_template, date_buffer);
-    result_code = sqlite3_exec(db, update_sql, sink, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "Error stopping previous entry -> %s\n", error_message);
-      sqlite3_free(error_message);
-      goto bail;
-    }
+    DB_EXEC(update_sql, sink, "Error stopping previous entry -> %s\n");
 
     sprintf(insert_sql, insert_template, project, escape(description));
-    result_code = sqlite3_exec(db, insert_sql, sink, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "Error starting entry -> %s\n", error_message);
-      sqlite3_free(error_message);
-      goto bail;
-    }
+    DB_EXEC(insert_sql, sink, "Error starting entry -> %s\n");
 
   } else if (!strcmp(command, "backup") || !strcmp(command, "b")) {
 
@@ -238,12 +221,7 @@ main(int argc, char *argv[])
       "update entries set end=datetime('%s', 'utc') where id=%s";
 
     sprintf(end_sql, end_template, end_time, row_id);
-    result_code = sqlite3_exec(db, end_sql, sink, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "Error ending entry -> %s\n", error_message);
-      sqlite3_free(error_message);
-      goto bail;
-    }
+    DB_EXEC(end_sql, sink, "Error ending entry -> %s\n");
 
   } else if (!strcmp(command, "start") || !strcmp(command, "s")) {
 
@@ -264,20 +242,10 @@ main(int argc, char *argv[])
     strftime(date_buffer, DATE_LENGTH, time_format, timeinfo);
 
     sprintf(update_sql, update_template, date_buffer);
-    result_code = sqlite3_exec(db, update_sql, sink, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "Error stopping previous entry -> %s\n", error_message);
-      sqlite3_free(error_message);
-      goto bail;
-    }
+    DB_EXEC(update_sql, sink, "Error stopping previous entry -> %s\n");
 
     sprintf(insert_sql, insert_template, project, escape(description));
-    result_code = sqlite3_exec(db, insert_sql, sink, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "Error starting entry -> %s\n", error_message);
-      sqlite3_free(error_message);
-      goto bail;
-    }
+    DB_EXEC(insert_sql, sink, "Error stopping previous entry -> %s\n");
 
   } else if (!strcmp(command, "report") || !strcmp(command, "r")) {
 
@@ -314,12 +282,7 @@ main(int argc, char *argv[])
     printf("│ project               │ time         │\n");
     printf("├───────────────────────┼──────────────┤\n");
 
-    result_code = sqlite3_exec(db, report_sql, report_row, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "Error with report -> %s\n", error_message);
-      sqlite3_free(error_message);
-      goto bail;
-    }
+    DB_EXEC(report_sql, report_row, "Error with report -> %s\n");
 
     printf("└───────────────────────┴──────────────┘\n");
 
@@ -338,12 +301,7 @@ main(int argc, char *argv[])
        from entries                             \
        order by start";
 
-    result_code = sqlite3_exec(db, list_sql, list_row, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "Error listing entries -> %s\n", error_message);
-      sqlite3_free(error_message);
-      goto bail;
-    }
+    DB_EXEC(list_sql, list_row, "Error listing entries -> %s\n");
 
     printf("└────────────┴────────────────┴──────────────────────┴──────────────────────────────────────────────────────────────┘\n");
 
@@ -360,12 +318,7 @@ main(int argc, char *argv[])
        from entries                             \
        where start = (select max(start) from entries)";
 
-    result_code = sqlite3_exec(db, last_sql, raw_row, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "Error getting last command -> %s\n", error_message);
-      sqlite3_free(error_message);
-      goto bail;
-    }
+    DB_EXEC(last_sql, raw_row, "Error getting last command -> %s\n");
 
   } else if (!strcmp(command, "add")) {
 
@@ -387,13 +340,7 @@ main(int argc, char *argv[])
        values('%s',datetime('%s', 'utc'),datetime('%s', 'utc'),'%s')";
 
     sprintf(add_sql, add_template, project, start, end, escape(description));
-
-    result_code = sqlite3_exec(db, add_sql, sink, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "Error adding entry -> %s\n", error_message);
-      sqlite3_free(error_message);
-      goto bail;
-    }
+    DB_EXEC(add_sql, sink, "Error adding entry -> %s\n");
 
   } else if (!strcmp(command, "stop")) {
 
@@ -413,13 +360,7 @@ main(int argc, char *argv[])
       end = argv[2];
     }
     sprintf(update_sql, stop_template, end);
-
-    result_code = sqlite3_exec(db, update_sql, sink, 0, &error_message);
-    if (result_code) {
-      fprintf(stderr, "Error stopping -> %s\n", error_message);
-      sqlite3_free(error_message);
-      goto bail;
-    }
+    DB_EXEC(update_sql, sink, "Error stopping -> %s\n");
 
 // -- End Commands -------------------------------------------------------------
 

@@ -22,6 +22,14 @@
 	stop\n\
 	t[ask]\n"
 
+#define DB_EXEC(query_sql, callback, error_template) \
+  result_code = sqlite3_exec(db, query_sql, callback, 0, &error_message);\
+  if (result_code) {\
+    fprintf(stderr, error_template, error_message);\
+    sqlite3_free(error_message);\
+    goto bail;\
+  }
+
 int time_string_to_seconds(char *);
 char *seconds_to_time_string(int);
 char *str_replace_all(const char *, const char *, const char *);
