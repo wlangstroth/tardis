@@ -403,7 +403,7 @@ main(int argc, char *argv[])
       fprintf(stderr, "Usage: %s stop [<end-time>]\n", argv[0]);
       goto bail;
     }
-    const char *end_template =
+    const char *stop_template =
         "update entries          \
          set end=datetime('%s')  \
          where start = (select max(start) from entries where end is null)";
@@ -412,7 +412,7 @@ main(int argc, char *argv[])
     if (argc == 3) {
       end = argv[2];
     }
-    sprintf(update_sql, end_template, end);
+    sprintf(update_sql, stop_template, end);
 
     result_code = sqlite3_exec(db, update_sql, sink, 0, &error_message);
     if (result_code) {
