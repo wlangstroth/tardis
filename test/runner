@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in report all; do
+for i in report list; do
   test/$i.sh
   if [ $? -eq 0 ]; then
     echo -e "\033[0;32m$i passed\033[0m"
