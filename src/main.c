@@ -87,12 +87,6 @@ main(int argc, char *argv[])
      description text,                          \
      end datetime)";
 
-  // result_code = sqlite3_exec(db, create_entries_sql, sink, 0, &error_message);
-  // if (result_code) {
-  //   fprintf(stderr, "Error creating entries table -> %s\n", error_message);
-  //   sqlite3_free(error_message);
-  //   goto bail;
-  // }
   DB_EXEC(create_entries_sql, sink, "Error creating entries table -> %s\n");
 
   // the estimate integer is in hours
@@ -108,12 +102,6 @@ main(int argc, char *argv[])
      estimate integer,                            \
      foreign key(parent) references tasks(id))";
 
-  // result_code = sqlite3_exec(db, create_tasks_sql, sink, 0, &error_message);
-  // if (result_code) {
-  //   fprintf(stderr, "Error creating tasks table -> %s\n", error_message);
-  //   sqlite3_free(error_message);
-  //   goto bail;
-  // }
   DB_EXEC(create_tasks_sql, sink, "Error creating tasks table -> %s\n");
 
 // -----------------------------------------------------------------------------
