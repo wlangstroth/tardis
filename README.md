@@ -13,6 +13,8 @@ activity, select the ... oh, screw it! I'm writing my own!
 Note: this really is for Time Lords. There isn't any serious error handling, and
 if you screw up, your best bet is to fix things with sql commands.
 
+Also note: The concept of starting and stopping is better implemented by [Watson](https://github.com/TailorDev/Watson).
+
 
 Usage
 -----
